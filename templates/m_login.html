@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#800000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Auditorías KH · Acceso móvil</title>
+<link rel="icon" type="image/png" href="/static/ico.png">
+<link rel="apple-touch-icon" href="/static/ico.png">
+<style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #800000 0%, #4a0000 100%); min-height: 100vh; color: #222; -webkit-text-size-adjust: 100%; }
+    .container {
+        min-height: 100vh;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        padding: 20px;
+        padding-top: calc(20px + env(safe-area-inset-top));
+        padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    }
+    .logo-zone {
+        background: white;
+        width: 110px; height: 110px;
+        border-radius: 20px;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        margin-bottom: 20px;
+    }
+    .logo-zone img { max-width: 80px; }
+    h1 { color: white; font-size: 1.5em; margin: 4px 0; }
+    .subtitle { color: rgba(255,255,255,0.85); font-size: 0.9em; margin-bottom: 28px; text-align: center; }
+
+    .card {
+        background: white;
+        width: 100%;
+        max-width: 420px;
+        border-radius: 16px;
+        padding: 22px 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    }
+    .card h2 {
+        color: #800000;
+        font-size: 1em;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0 0 14px;
+        text-align: center;
+    }
+    label {
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        font-weight: bold;
+        color: #555;
+        display: block;
+        margin-bottom: 6px;
+    }
+    select, input[type="text"], input[type="password"] {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 1em;
+        border: 1px solid #d0d0d0;
+        border-radius: 10px;
+        background: #fafafa;
+        margin-bottom: 14px;
+        min-height: 48px;
+    }
+    select:focus, input:focus { outline: none; border-color: #800000; background: white; }
+
+    .primary-btn {
+        width: 100%;
+        padding: 14px;
+        font-size: 1em;
+        font-weight: bold;
+        background: #800000;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        min-height: 50px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .primary-btn:active { background: #5e0000; }
+
+    .divider {
+        display: flex; align-items: center; gap: 10px;
+        margin: 22px 0 16px;
+        color: #aaa; font-size: 0.78em;
+        text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .divider::before, .divider::after {
+        content: ''; flex: 1; height: 1px; background: #e0e0e0;
+    }
+
+    .err { background: #fdecea; color: #c0392b; padding: 10px; border-radius: 8px; font-size: 0.88em; text-align: center; margin-bottom: 12px; }
+
+    .footer-link {
+        margin-top: 18px;
+        text-align: center;
+        color: rgba(255,255,255,0.85);
+        font-size: 0.82em;
+    }
+    .footer-link a { color: white; text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="logo-zone"><img src="/static/Logo.png" alt="KH"></div>
+    <h1>Auditorías KH</h1>
+    <div class="subtitle">Acceso móvil · Process Confirmation</div>
+
+    <div class="card">
+        {% if error %}
+        <div class="err">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" autocomplete="off">
+            <h2>Entrar como auditor</h2>
+            <label for="auditor_select">Seleccione su nombre</label>
+            <select name="auditor_select" id="auditor_select">
+                <option value="">— Seleccionar —</option>
+                {% for a in auditores %}
+                <option value="{{ a }}">{{ a }}</option>
+                {% endfor %}
+            </select>
+            <button class="primary-btn" type="submit">Entrar</button>
+        </form>
+
+        <div class="divider">o administrador</div>
+
+        <form method="POST" autocomplete="off">
+            <label for="admin_user">Usuario</label>
+            <input type="text" name="admin_user" id="admin_user" placeholder="Usuario admin">
+            <label for="admin_pass">Contraseña</label>
+            <input type="password" name="admin_pass" id="admin_pass">
+            <button class="primary-btn" style="background:#444;" type="submit">Entrar como Admin</button>
+        </form>
+    </div>
+
+    <div class="footer-link">
+        <a href="/index">🖥️ Versión escritorio</a>
+    </div>
+</div>
+</body>
+</html>

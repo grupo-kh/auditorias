@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Audit App</title>
+    <link rel="icon" type="image/png" href="/static/ico.png">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-card { background: white; padding: 30px; border-radius: 8px; border: 2px solid #800000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { color: #800000; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #004080; font-weight: bold; }
+        select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #800000; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; font-weight: bold; margin-top: 10px; }
+        button:hover { background-color: #a00000; }
+        .error { color: red; text-align: center; margin-bottom: 10px; }
+        .divider { border-top: 1px solid #ccc; margin: 20px 0; position: relative; }
+        .divider span { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: white; padding: 0 10px; color: #666; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="/static/Logo.png" alt="Logo" style="max-width: 150px;">
+        </div>
+        <h2>Acceso Auditores</h2>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        <form method="POST">
+            <div class="form-group">
+                <label for="auditor_select">Selecciona tu nombre:</label>
+                <select name="auditor_select" id="auditor_select">
+                    <option value="">-- Seleccionar --</option>
+                    {% for auditor in auditores %}
+                        <option value="{{ auditor }}">{{ auditor }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit">Entrar como Auditor</button>
+
+            <div class="divider"><span>O administrador</span></div>
+
+            <div class="form-group">
+                <label for="admin_user">Usuario:</label>
+                <input type="text" name="admin_user" id="admin_user">
+            </div>
+            <div class="form-group">
+                <label for="admin_pass">Contraseña:</label>
+                <input type="password" name="admin_pass" id="admin_pass">
+            </div>
+            <button type="submit">Acceso Admin</button>
+        </form>
+        <div style="text-align:center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+            <a href="/m_login" style="color: #800000; text-decoration: none; font-weight: bold;">📱 Acceso desde móvil</a>
+        </div>
+    </div>
+
+    <script>
+        // Auto-redirige a versión móvil si detecta dispositivo móvil
+        (function() {
+            const ua = navigator.userAgent || '';
+            const isMobile = /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(ua);
+            const isSmallScreen = window.innerWidth <= 768;
+            if (isMobile || isSmallScreen) {
+                // No redirige si el usuario ya ha venido manualmente desde m_login
+                if (!window.location.search.includes('desktop=1')) {
+                    window.location.replace('/m_login');
+                }
+            }
+        })();
+    </script>
+</body>
+</html>

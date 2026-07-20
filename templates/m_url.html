@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>URL móvil · Auditorías KH</title>
+<link rel="icon" type="image/png" href="/static/ico.png">
+<style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f4f4f7; padding: 40px 20px; color: #222; max-width: 620px; margin: auto; text-align: center; }
+    h1 { color: #800000; }
+    .url-box {
+        background: white;
+        border: 2px solid #800000;
+        padding: 18px;
+        border-radius: 8px;
+        font-family: Consolas, monospace;
+        font-size: 1.15em;
+        word-break: break-all;
+        margin: 24px 0;
+        color: #222;
+    }
+    button {
+        background: #800000;
+        color: white;
+        border: none;
+        padding: 12px 28px;
+        font-size: 1em;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    button:hover { background: #5e0000; }
+    a { color: #800000; }
+    .hint { font-size: 0.9em; color: #666; margin-top: 30px; }
+</style>
+</head>
+<body>
+
+<h1>📱 URL para acceder desde el móvil</h1>
+<p>Abre este enlace en el navegador del móvil. El móvil debe estar conectado a la misma red Wi-Fi.</p>
+
+<div class="url-box" id="url">{{ url }}</div>
+
+<button onclick="copiar()">📋 Copiar URL</button>
+<a href="{{ url }}" target="_blank" style="margin-left:10px;"><button style="background:#444;">🔗 Probar</button></a>
+
+<p class="hint"><a href="/index">&laquo; Volver al panel</a></p>
+
+<script>
+function copiar() {
+    navigator.clipboard.writeText(document.getElementById('url').textContent.trim()).then(() => {
+        event.target.textContent = '✓ Copiado';
+        setTimeout(() => event.target.textContent = '📋 Copiar URL', 1500);
+    });
+}
+</script>
+
+</body>
+</html>

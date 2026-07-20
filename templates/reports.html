@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informes de Auditoría</title>
+    <link rel="icon" type="image/png" href="/static/ico.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fdfdfd; padding: 20px; }
+        #report-content { background: white; padding: 20px; max-width: 720px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #800000; margin-bottom: 30px; padding-bottom: 10px; position: relative; }
+        h1 { color: #666; margin: 0; font-weight: normal; flex-grow: 1; text-align: center; }
+        .logo-right { position: absolute; right: 0; top: 0; }
+        .logo-right img { max-height: 40px; }
+        .chart-container { background: white; border: 1px solid #eee; padding: 10px; margin-bottom: 20px; }
+        .chart-group { page-break-inside: avoid; margin-bottom: 40px; }
+        .chart-title { text-align: center; color: #666; font-size: 1.2em; margin-bottom: 20px; font-weight: normal; }
+        .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 1000px) {
+            .grid { grid-template-columns: 1fr 1fr; }
+            .full-width { grid-column: span 2; }
+        }
+    </style>
+</head>
+<body>
+    <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
+        <a href="/index" style="color: #800000; font-weight: bold; text-decoration: none;">&laquo; Volver</a>
+        <button onclick="exportToPDF()" style="background: #800000; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; font-weight: bold;">📥 Exportar a PDF (A4)</button>
+    </div>
+
+    <div id="report-content">
+        <div class="chart-group">
+            <div class="header">
+                <h1>Respuestas Nok por Semana</h1>
+                <div class="logo-right">
+                    <img src="/static/Logo.png" alt="Logo">
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="chartNokPerWeek" height="300"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-group">
+            <div class="header">
+                <h1>Auditorías por Auditor</h1>
+                <div class="logo-right">
+                    <img src="/static/Logo.png" alt="Logo">
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="chartByAuditor" height="300"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-group">
+            <div class="header">
+                <h1>NOK por puesto Auditado</h1>
+                <div class="logo-right">
+                    <img src="/static/Logo.png" alt="Logo">
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="chartNokByAudited" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        Chart.register(ChartDataLabels);
+
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    top: 30
+                }
+            },
+            plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    formatter: (value) => value > 0 ? value : '',
+                    font: { weight: 'bold' },
+                    color: '#800000'
+                },
+                legend: { position: 'bottom' }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: 'RESPUESTAS NOK', color: '#800000', font: { weight: 'bold' } },
+                    ticks: { stepSize: 1 }
+                },
+                x: {
+                    title: { display: true, text: 'SEMANA', color: '#800000', font: { weight: 'bold' } }
+                }
+            }
+        };
+
+        async function initCharts() {
+            const response = await fetch('/api?action=get_stats');
+            const data = await response.json();
+
+            // 1. NOK por Semana
+            new Chart(document.getElementById('chartNokPerWeek'), {
+                type: 'bar',
+                data: {
+                    labels: data.nok_per_week.map(d => d.week),
+                    datasets: [{
+                        label: 'Respuestas NOK',
+                        data: data.nok_per_week.map(d => d.count),
+                        backgroundColor: '#d68e8e'
+                    }]
+                },
+                options: commonOptions
+            });
+
+            // 2. Auditorías por Auditor (OK vs NOK)
+            const auditors = [...new Set(data.by_auditor.map(d => d.auditor))];
+            new Chart(document.getElementById('chartByAuditor'), {
+                type: 'bar',
+                data: {
+                    labels: auditors,
+                    datasets: [
+                        {
+                            label: 'No Ok',
+                            data: auditors.map(a => {
+                                const found = data.by_auditor.find(d => d.auditor === a && d.ok_nok === 'NOK');
+                                return found ? found.count : 0;
+                            }),
+                            backgroundColor: '#ff4d4d'
+                        },
+                        {
+                            label: 'Ok',
+                            data: auditors.map(a => {
+                                const found = data.by_auditor.find(d => d.auditor === a && d.ok_nok === 'OK');
+                                return found ? found.count : 0;
+                            }),
+                            backgroundColor: '#00b347'
+                        }
+                    ]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        ...commonOptions.plugins,
+                        datalabels: { ...commonOptions.plugins.datalabels, color: '#333' }
+                    },
+                    scales: {
+                        ...commonOptions.scales,
+                        x: {
+                            ...commonOptions.scales.x,
+                            title: { ...commonOptions.scales.x.title, text: 'AUDITOR' }
+                        },
+                        y: {
+                            ...commonOptions.scales.y,
+                            title: { ...commonOptions.scales.y.title, text: 'TOTAL AUDITORÍAS' }
+                        }
+                    }
+                }
+            });
+
+            // 3. NOK por puesto Auditado (Stacked)
+            const auditados = [...new Set(data.nok_by_audited.map(d => d.auditado))];
+            const auditorsForNok = [...new Set(data.nok_by_audited.map(d => d.auditor))];
+            const colors = ['#004080', '#800000', '#8eb258', '#f39c12', '#9b59b6'];
+
+            new Chart(document.getElementById('chartNokByAudited'), {
+                type: 'bar',
+                data: {
+                    labels: auditados,
+                    datasets: auditorsForNok.map((auditor, i) => ({
+                        label: auditor,
+                        data: auditados.map(a => {
+                            const found = data.nok_by_audited.find(d => d.auditado === a && d.auditor === auditor);
+                            return found ? found.count : 0;
+                        }),
+                        backgroundColor: colors[i % colors.length]
+                    }))
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        x: {
+                            ...commonOptions.scales.x,
+                            stacked: true,
+                            title: { ...commonOptions.scales.x.title, text: 'PUESTO AUDITADO' }
+                        },
+                        y: { ...commonOptions.scales.y, stacked: true }
+                    }
+                }
+            });
+        }
+
+        function exportToPDF() {
+            const element = document.getElementById('report-content');
+            const now = new Date();
+            const mes = now.toLocaleString('es-ES', { month: 'long' });
+            const año = now.getFullYear();
+            const filename = `auditoria_${mes}_${año}.pdf`;
+
+            const opt = {
+                margin: 10,
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+
+        initCharts();
+    </script>
+</body>
+</html>

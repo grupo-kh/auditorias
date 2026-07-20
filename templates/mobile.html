@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#800000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Auditorías KH · Móvil</title>
+<link rel="icon" type="image/png" href="/static/ico.png">
+<link rel="apple-touch-icon" href="/static/ico.png">
+<style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f4f4f7; color: #222; font-size: 15px; -webkit-text-size-adjust: 100%; }
+    body { padding-bottom: 100px; /* espacio para barra inferior */ }
+    a { color: #800000; text-decoration: none; }
+
+    /* ==================== HEADER ==================== */
+    .topbar {
+        position: sticky; top: 0;
+        background: #800000; color: white;
+        padding: 10px 14px;
+        display: flex; align-items: center; justify-content: space-between;
+        z-index: 100;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        padding-top: calc(10px + env(safe-area-inset-top));
+    }
+    .topbar .brand { display: flex; align-items: center; gap: 8px; }
+    .topbar .brand img { width: 30px; height: 30px; background: white; border-radius: 4px; padding: 2px; }
+    .topbar .brand-text { font-weight: bold; font-size: 1em; line-height: 1.1; }
+    .topbar .brand-sub { font-size: 0.7em; opacity: 0.9; }
+    .topbar .user-chip { font-size: 0.78em; background: rgba(255,255,255,0.18); padding: 4px 8px; border-radius: 12px; }
+    .menu-btn { background: none; border: none; color: white; font-size: 1.4em; padding: 4px 8px; cursor: pointer; }
+
+    /* ==================== FILTROS ==================== */
+    .filters {
+        background: white;
+        padding: 10px 12px;
+        border-bottom: 1px solid #e0e0e0;
+        position: sticky;
+        top: 50px;
+        z-index: 95;
+    }
+    .filters-row { display: flex; gap: 8px; }
+    .filter-select {
+        flex: 1;
+        padding: 8px 28px 8px 10px;
+        font-size: 0.9em;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23800000'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 8px center;
+        appearance: none;
+        -webkit-appearance: none;
+        color: #333;
+        min-height: 38px;
+    }
+    .search-row { margin-top: 8px; position: relative; }
+    .search-input {
+        width: 100%;
+        padding: 9px 32px 9px 12px;
+        font-size: 0.95em;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: #fafafa;
+    }
+    .search-row::after {
+        content: '🔍';
+        position: absolute; right: 10px; top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.5;
+        pointer-events: none;
+    }
+    .counter-pill {
+        display: inline-block;
+        background: #800000;
+        color: white;
+        font-size: 0.75em;
+        padding: 3px 10px;
+        border-radius: 12px;
+        margin-top: 8px;
+        font-weight: bold;
+    }
+
+    /* ==================== CARD PREGUNTA ==================== */
+    .card {
+        background: white;
+        margin: 12px;
+        border-radius: 12px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        overflow: hidden;
+    }
+    .card.empty {
+        padding: 30px 20px;
+        text-align: center;
+        color: #888;
+    }
+    .card-head {
+        background: linear-gradient(135deg, #800000, #a83232);
+        color: white;
+        padding: 12px 14px;
+    }
+    .card-head .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+    .tag {
+        display: inline-block;
+        background: rgba(255,255,255,0.18);
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.7em;
+        font-weight: 500;
+    }
+    .card-head h2 {
+        font-size: 0.85em;
+        font-weight: normal;
+        opacity: 0.95;
+        margin: 0;
+    }
+    .card-head h2 strong { font-weight: bold; }
+    .card-body { padding: 14px; }
+    .info-block {
+        margin-bottom: 14px;
+    }
+    .info-block .label {
+        font-size: 0.7em;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #800000;
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+    .info-block .value {
+        font-size: 0.95em;
+        line-height: 1.4;
+        color: #222;
+    }
+
+    /* ==================== FORM REGISTRO ==================== */
+    .register-form {
+        background: #fff8f8;
+        padding: 14px;
+        border-top: 2px dashed #ddd;
+    }
+    .register-form h3 {
+        margin: 0 0 12px;
+        font-size: 0.9em;
+        color: #800000;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .field-group {
+        margin-bottom: 12px;
+    }
+    .field-group label {
+        font-size: 0.75em;
+        font-weight: bold;
+        color: #555;
+        display: block;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 1em;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: white;
+        min-height: 44px;
+    }
+    .field-group textarea {
+        min-height: 60px;
+        resize: vertical;
+        font-family: inherit;
+    }
+    .field-row { display: flex; gap: 8px; }
+    .field-row .field-group { flex: 1; }
+
+    /* Botones OK / NOK / N/A grandes */
+    .btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+    }
+    .btn-choice {
+        padding: 12px 4px;
+        font-size: 0.92em;
+        font-weight: bold;
+        border: 2px solid #ddd;
+        background: white;
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.15s ease;
+        color: #555;
+    }
+    .btn-choice.ok.selected { background: #2c8a2c; color: white; border-color: #2c8a2c; }
+    .btn-choice.nok.selected { background: #c0392b; color: white; border-color: #c0392b; }
+    .btn-choice.na.selected { background: #888; color: white; border-color: #888; }
+    .btn-choice:active { transform: scale(0.97); }
+
+    .save-btn {
+        width: 100%;
+        margin-top: 10px;
+        padding: 14px;
+        font-size: 1em;
+        font-weight: bold;
+        background: #800000;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        min-height: 50px;
+    }
+    .save-btn:active { background: #5e0000; }
+    .save-btn.success { background: #2c8a2c; }
+
+    /* ==================== HISTORICO ==================== */
+    .history-section {
+        background: white;
+        margin: 12px;
+        border-radius: 12px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        overflow: hidden;
+    }
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 14px;
+        cursor: pointer;
+        user-select: none;
+    }
+    .history-header h3 {
+        margin: 0;
+        font-size: 0.92em;
+        color: #800000;
+    }
+    .history-header .chevron { transition: transform 0.2s; }
+    .history-section.open .history-header .chevron { transform: rotate(180deg); }
+
+    .history-list {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+    .history-section.open .history-list { max-height: 9999px; }
+
+    .history-item {
+        padding: 10px 14px;
+        border-top: 1px solid #f0f0f0;
+        font-size: 0.85em;
+    }
+    .history-item .first-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+    }
+    .history-item .fecha { color: #555; }
+    .history-item .badge {
+        font-weight: bold;
+        padding: 2px 8px;
+        border-radius: 8px;
+        font-size: 0.85em;
+    }
+    .badge.ok { background: #e6f4e6; color: #2c8a2c; }
+    .badge.nok { background: #fdecea; color: #c0392b; }
+    .badge.na { background: #ececec; color: #555; }
+    .history-item .meta {
+        color: #888;
+        font-size: 0.82em;
+    }
+    .history-item .comentario {
+        color: #444;
+        margin-top: 4px;
+        font-style: italic;
+    }
+
+    /* ==================== NAV INFERIOR ==================== */
+    .bottom-nav {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        background: white;
+        border-top: 1px solid #e0e0e0;
+        padding: 10px 12px;
+        padding-bottom: calc(10px + env(safe-area-inset-bottom));
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        z-index: 90;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+    }
+    .nav-btn {
+        flex: 1;
+        background: #800000;
+        color: white;
+        border: none;
+        padding: 12px;
+        font-size: 1.1em;
+        border-radius: 8px;
+        cursor: pointer;
+        min-height: 44px;
+        font-weight: bold;
+    }
+    .nav-btn:disabled { background: #ccc; }
+    .nav-btn:active { transform: scale(0.97); }
+    .nav-info {
+        flex: 1;
+        text-align: center;
+        font-size: 0.85em;
+        color: #555;
+    }
+    .nav-info strong { color: #800000; font-size: 1.1em; }
+
+    /* ==================== DRAWER MENU ==================== */
+    .drawer {
+        position: fixed;
+        top: 0; right: -280px;
+        width: 270px; height: 100vh;
+        background: white;
+        z-index: 200;
+        transition: right 0.25s ease;
+        box-shadow: -3px 0 12px rgba(0,0,0,0.18);
+        padding: 20px 18px;
+        padding-top: calc(20px + env(safe-area-inset-top));
+    }
+    .drawer.open { right: 0; }
+    .drawer h3 { color: #800000; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+    .drawer a { display: block; padding: 12px 4px; border-bottom: 1px solid #f0f0f0; color: #333; font-weight: 500; }
+    .drawer a:active { background: #fdeaea; }
+    .drawer .close { position: absolute; top: 14px; right: 14px; background: none; border: none; font-size: 1.5em; cursor: pointer; color: #800000; }
+    .overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+        z-index: 150; opacity: 0; pointer-events: none;
+        transition: opacity 0.2s;
+    }
+    .overlay.show { opacity: 1; pointer-events: auto; }
+
+    /* ==================== TOAST ==================== */
+    .toast {
+        position: fixed;
+        bottom: 90px; left: 50%;
+        transform: translateX(-50%) translateY(50px);
+        background: #2c8a2c;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 0.9em;
+        font-weight: 500;
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 250;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { background: #c0392b; }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<div class="topbar">
+    <div class="brand">
+        <img src="/static/Logo.png" alt="KH">
+        <div>
+            <div class="brand-text">Auditorías</div>
+            <div class="brand-sub">Process Confirmation</div>
+        </div>
+    </div>
+    <span class="user-chip">{{ user }}</span>
+    <button class="menu-btn" onclick="toggleDrawer()" aria-label="Menú">☰</button>
+</div>
+
+<!-- ============ DRAWER MENU ============ -->
+<div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
+<div class="drawer" id="drawer">
+    <button class="close" onclick="toggleDrawer()">×</button>
+    <h3>Menú</h3>
+    <a href="/manual" target="_blank">📖 Manual de ayuda</a>
+    {% if is_admin %}
+    <a href="/reports">📈 Informes</a>
+    <a href="/admin_preguntas">⚙️ Gestionar preguntas</a>
+    <a href="/index">🖥️ Versión escritorio</a>
+    {% else %}
+    <a href="/index">🖥️ Versión escritorio</a>
+    {% endif %}
+    <a href="/logout">🚪 Cerrar sesión</a>
+</div>
+
+<!-- ============ FILTROS ============ -->
+<div class="filters">
+    <div class="filters-row">
+        {% if is_admin %}
+        <select id="f-auditor" class="filter-select">
+            <option value="">Auditor</option>
+        </select>
+        {% endif %}
+        <select id="f-auditado" class="filter-select">
+            <option value="">Auditado</option>
+        </select>
+        <select id="f-periodicidad" class="filter-select">
+            <option value="">Periodicidad</option>
+        </select>
+    </div>
+    <div class="search-row">
+        <input id="f-search" class="search-input" type="text" placeholder="Buscar en preguntas…">
+    </div>
+    <span class="counter-pill"><span id="counter">0</span> preguntas</span>
+</div>
+
+<!-- ============ CONTENIDO ============ -->
+<div id="question-card">
+    <div class="card empty">Cargando…</div>
+</div>
+
+<!-- ============ NAVEGACION INFERIOR ============ -->
+<div class="bottom-nav">
+    <button id="btn-prev" class="nav-btn" onclick="navigate(-1)">‹</button>
+    <div class="nav-info"><strong id="nav-current">0</strong> de <span id="nav-total">0</span></div>
+    <button id="btn-next" class="nav-btn" onclick="navigate(1)">›</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const IS_ADMIN = {{ is_admin|tojson }};
+const FORCED_AUDITOR = {{ ('' if is_admin else user)|tojson }};
+
+let ids = [];
+let current = -1;
+let selectedAuditor = FORCED_AUDITOR;
+let selectedAuditado = '';
+let selectedPeriodicidad = '';
+let searchQuery = '';
+let newAnswer = '';   // OK / NOK / No aplica
+
+// ---------- UI ----------
+function toggleDrawer() {
+    document.getElementById('drawer').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+}
+
+function showToast(msg, isError = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.toggle('error', isError);
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ---------- FETCHES ----------
+async function loadFilters() {
+    const url = `/api?action=get_filter_values&auditor=${encodeURIComponent(selectedAuditor)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (IS_ADMIN) {
+        // Cargar auditores únicos
+        const auditores = ['CALIDAD CLIENTE','COORDINACIÓN','J. SECCIÓN A','J. SECCIÓN B','LABORATORIO','OPTIMIZADOR A','OPTIMIZADOR B','OPTIMIZADOR C','R. PLANTA','SUPERVISOR A','SUPERVISOR B'];
+        const sel = document.getElementById('f-auditor');
+        sel.innerHTML = '<option value="">Auditor (todos)</option>' +
+            auditores.map(a => `<option value="${a}" ${a===selectedAuditor?'selected':''}>${a}</option>`).join('');
+    }
+
+    const fA = document.getElementById('f-auditado');
+    fA.innerHTML = '<option value="">Auditado (todos)</option>' +
+        data.auditados.map(v => `<option value="${v}" ${v===selectedAuditado?'selected':''}>${v}</option>`).join('');
+
+    const fP = document.getElementById('f-periodicidad');
+    fP.innerHTML = '<option value="">Periodicidad (todas)</option>' +
+        data.periodicidades.map(v => `<option value="${v}" ${v===selectedPeriodicidad?'selected':''}>${v}</option>`).join('');
+}
+
+async function loadQuestions() {
+    const url = `/api?action=get_questions&auditor=${encodeURIComponent(selectedAuditor)}&auditado=${encodeURIComponent(selectedAuditado)}&periodicidad=${encodeURIComponent(selectedPeriodicidad)}&search=${encodeURIComponent(searchQuery)}`;
+    const res = await fetch(url);
+    ids = await res.json();
+    document.getElementById('counter').textContent = ids.length;
+    document.getElementById('nav-total').textContent = ids.length;
+
+    if (ids.length > 0) {
+        current = 0;
+        loadQuestion(ids[0]);
+    } else {
+        current = -1;
+        renderEmpty('No hay preguntas con esos filtros.');
+        updateNav();
+    }
+}
+
+function renderEmpty(msg) {
+    document.getElementById('question-card').innerHTML = `<div class="card empty">${msg}</div>`;
+}
+
+async function loadQuestion(id) {
+    newAnswer = '';
+    document.getElementById('question-card').innerHTML = `<div class="card empty">Cargando pregunta…</div>`;
+
+    const [qRes, hRes] = await Promise.all([
+        fetch(`/api?action=get_question_details&id=${id}`).then(r => r.json()),
+        fetch(`/api?action=get_history&id=${id}`).then(r => r.json())
+    ]);
+
+    renderQuestion(qRes, hRes);
+    updateNav();
+}
+
+function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderQuestion(q, history) {
+    const historyHtml = history.length === 0
+        ? '<div class="history-item" style="color:#888;text-align:center;">Sin auditorías previas</div>'
+        : history.map(h => {
+            const badgeCls = h.ok_nok === 'OK' ? 'ok' : (h.ok_nok === 'NOK' ? 'nok' : 'na');
+            return `
+            <div class="history-item">
+                <div class="first-line">
+                    <span class="fecha">${h.fecha}</span>
+                    <span class="badge ${badgeCls}">${h.ok_nok}</span>
+                </div>
+                ${h.numero_operario ? `<div class="meta">Operario: ${escapeHtml(h.numero_operario)}</div>` : ''}
+                ${h.comentario ? `<div class="comentario">${escapeHtml(h.comentario)}</div>` : ''}
+            </div>`;
+        }).join('');
+
+    const today = new Date().toISOString().split('T')[0];
+
+    document.getElementById('question-card').innerHTML = `
+        <div class="card">
+            <div class="card-head">
+                <div class="tag-row">
+                    ${q.proceso ? `<span class="tag">${escapeHtml(q.proceso)}</span>` : ''}
+                    ${q.grupo ? `<span class="tag">${escapeHtml(q.grupo)}</span>` : ''}
+                    ${q.periodicidad ? `<span class="tag">${escapeHtml(q.periodicidad)}</span>` : ''}
+                </div>
+                <h2>Auditor: <strong>${escapeHtml(q.auditor)}</strong> · Auditado: <strong>${escapeHtml(q.auditado)}</strong></h2>
+            </div>
+            <div class="card-body">
+                <div class="info-block">
+                    <div class="label">Pregunta</div>
+                    <div class="value">${escapeHtml(q.pregunta)}</div>
+                </div>
+                <div class="info-block">
+                    <div class="label">Qué esperamos</div>
+                    <div class="value">${escapeHtml(q.que_esperamos)}</div>
+                </div>
+            </div>
+
+            <div class="register-form">
+                <h3>Registrar auditoría</h3>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Fecha</label>
+                        <input type="date" id="new-fecha" value="${today}">
+                    </div>
+                    <div class="field-group">
+                        <label>Nº Operario</label>
+                        <input type="text" id="new-operario" inputmode="numeric" placeholder="—">
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label>Resultado</label>
+                    <div class="btn-group">
+                        <button class="btn-choice ok"  data-val="OK"        onclick="pickAnswer(this)">OK</button>
+                        <button class="btn-choice nok" data-val="NOK"       onclick="pickAnswer(this)">NOK</button>
+                        <button class="btn-choice na"  data-val="No aplica" onclick="pickAnswer(this)">N/A</button>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label>Comentario (opcional)</label>
+                    <textarea id="new-comentario" placeholder="Observaciones…"></textarea>
+                </div>
+                <button class="save-btn" onclick="saveAudit(${q.id})">💾 Guardar auditoría</button>
+            </div>
+        </div>
+
+        <div class="history-section" id="history-section">
+            <div class="history-header" onclick="document.getElementById('history-section').classList.toggle('open')">
+                <h3>📋 Histórico (${history.length})</h3>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="history-list">
+                ${historyHtml}
+            </div>
+        </div>
+    `;
+}
+
+function pickAnswer(btn) {
+    document.querySelectorAll('.btn-choice').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    newAnswer = btn.dataset.val;
+}
+
+async function saveAudit(questionId) {
+    if (!newAnswer) {
+        showToast('Selecciona OK, NOK o N/A', true);
+        return;
+    }
+    const fecha = document.getElementById('new-fecha').value;
+    const comentario = document.getElementById('new-comentario').value;
+    const numero_operario = document.getElementById('new-operario').value;
+
+    const res = await fetch('/api?action=save_audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pregunta_id: questionId, ok_nok: newAnswer, comentario, fecha, numero_operario })
+    });
+
+    if (res.ok) {
+        showToast('✓ Guardado correctamente');
+        loadQuestion(questionId);
+    } else {
+        showToast('Error al guardar', true);
+    }
+}
+
+function navigate(delta) {
+    if (ids.length === 0) return;
+    current = Math.max(0, Math.min(ids.length - 1, current + delta));
+    loadQuestion(ids[current]);
+}
+
+function updateNav() {
+    document.getElementById('nav-current').textContent = current >= 0 ? (current + 1) : 0;
+    document.getElementById('btn-prev').disabled = current <= 0;
+    document.getElementById('btn-next').disabled = current >= ids.length - 1;
+}
+
+// ---------- LISTENERS ----------
+document.getElementById('f-auditado').addEventListener('change', e => {
+    selectedAuditado = e.target.value;
+    loadQuestions();
+});
+document.getElementById('f-periodicidad').addEventListener('change', e => {
+    selectedPeriodicidad = e.target.value;
+    loadQuestions();
+});
+if (IS_ADMIN) {
+    document.getElementById('f-auditor').addEventListener('change', e => {
+        selectedAuditor = e.target.value;
+        selectedAuditado = '';
+        selectedPeriodicidad = '';
+        loadFilters().then(loadQuestions);
+    });
+}
+
+let searchTimer;
+document.getElementById('f-search').addEventListener('input', e => {
+    clearTimeout(searchTimer);
+    searchQuery = e.target.value;
+    searchTimer = setTimeout(loadQuestions, 250);
+});
+
+// ---------- INIT ----------
+loadFilters().then(loadQuestions);
+</script>
+
+</body>
+</html>

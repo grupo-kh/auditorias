@@ -1,0 +1,15 @@
+# Configuración local con secretos
+.env
+
+# Claude
+.claude/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Logs
+*.log
+
+# NOTA: los .db NO se ignoran a propósito (los datos van al repo)

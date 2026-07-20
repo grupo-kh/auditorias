@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Preguntas - Admin</title>
+    <link rel="icon" type="image/png" href="/static/ico.png">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 8px; border: 1px solid #800000; }
+        h1 { color: #800000; border-bottom: 2px solid #800000; padding-bottom: 10px; }
+        .form-section { background: #fdeaea; padding: 15px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #ffcccc; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .form-grid div { display: flex; flex-direction: column; }
+        label { font-size: 0.8em; font-weight: bold; color: #004080; }
+        input, select, textarea { padding: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        .full-width { grid-column: span 3; }
+        button { padding: 10px; background: #800000; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+        button.cancel { background: #666; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.8em; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #800000; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .actions { display: flex; gap: 5px; }
+        .btn-edit { background: #004080; color: white; padding: 2px 5px; text-decoration: none; border-radius: 3px; }
+        .btn-delete { background: #cc0000; color: white; padding: 2px 5px; border: none; border-radius: 3px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="/static/Logo.png" alt="Logo" style="max-width: 150px;">
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Gestión de Preguntas</h1>
+            <a href="/index" style="color: #800000; font-weight: bold;">&laquo; Volver al Panel</a>
+        </div>
+
+        <div class="form-section">
+            <h3 id="form-title">Nueva Pregunta</h3>
+            <form id="question-form">
+                <input type="hidden" id="q-id" value="">
+                <div class="form-grid">
+                    <div>
+                        <label>Proceso</label>
+                        <input type="text" id="q-proceso" required>
+                    </div>
+                    <div>
+                        <label>Auditor</label>
+                        <select id="q-auditor" required>
+                            <option value="CALIDAD CLIENTE">CALIDAD CLIENTE</option>
+                            <option value="COORDINACIÓN">COORDINACIÓN</option>
+                            <option value="J. SECCIÓN A">J. SECCIÓN A</option>
+                            <option value="J. SECCIÓN B">J. SECCIÓN B</option>
+                            <option value="LABORATORIO">LABORATORIO</option>
+                            <option value="OPTIMIZADOR A">OPTIMIZADOR A</option>
+                            <option value="OPTIMIZADOR B">OPTIMIZADOR B</option>
+                            <option value="OPTIMIZADOR C">OPTIMIZADOR C</option>
+                            <option value="R. PLANTA">R. PLANTA</option>
+                            <option value="SUPERVISOR A">SUPERVISOR A</option>
+                            <option value="SUPERVISOR B">SUPERVISOR B</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Auditado</label>
+                        <select id="q-auditado" required>
+                            <option value="CALIDAD">CALIDAD</option>
+                            <option value="CALIDAD CLIENTE">CALIDAD CLIENTE</option>
+                            <option value="CARRETILLERO">CARRETILLERO</option>
+                            <option value="J. SECCIÓN">J. SECCIÓN</option>
+                            <option value="OPERARIO">OPERARIO</option>
+                            <option value="OPTIMIZADOR">OPTIMIZADOR</option>
+                            <option value="R. PLANTA">R. PLANTA</option>
+                            <option value="REMOLCADOR">REMOLCADOR</option>
+                            <option value="SUPERVISOR A">SUPERVISOR A</option>
+                            <option value="SUPERVISOR B">SUPERVISOR B</option>
+                            <option value="T. MANTENIMIENTO">T. MANTENIMIENTO</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Grupo</label>
+                        <input type="text" id="q-grupo">
+                    </div>
+                    <div>
+                        <label>Punto</label>
+                        <input type="number" id="q-punto">
+                    </div>
+                    <div>
+                        <label>Periodicidad</label>
+                        <select id="q-periodicidad" required>
+                            <option value="0-DIARIO">0-DIARIO</option>
+                            <option value="1-LUNES">1-LUNES</option>
+                            <option value="2-MARTES">2-MARTES</option>
+                            <option value="3-MIERCOLES">3-MIERCOLES</option>
+                            <option value="4-JUEVES">4-JUEVES</option>
+                            <option value="5-VIERNES">5-VIERNES</option>
+                            <option value="MENSUAL">MENSUAL</option>
+                        </select>
+                    </div>
+                    <div class="full-width">
+                        <label>Pregunta</label>
+                        <textarea id="q-pregunta" rows="3" required></textarea>
+                    </div>
+                    <div class="full-width">
+                        <label>Qué Esperamos</label>
+                        <textarea id="q-que_esperamos" rows="3"></textarea>
+                    </div>
+                </div>
+                <button type="submit" id="btn-save">Guardar Pregunta</button>
+                <button type="button" id="btn-cancel" class="cancel" style="display:none;">Cancelar</button>
+            </form>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Auditor</th>
+                    <th>Auditado</th>
+                    <th>Pregunta</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in preguntas %}
+                <tr>
+                    <td>{{ p['id'] }}</td>
+                    <td>{{ p['auditor'] }}</td>
+                    <td>{{ p['auditado'] }}</td>
+                    <td>{{ p['pregunta'][:100] }}{% if p['pregunta']|length > 100 %}...{% endif %}</td>
+                    <td class="actions">
+                        <button class="btn-edit"
+                                data-question='{{ p|tojson|e }}'
+                                onclick="editBtnClick(this)">Editar</button>
+                        <button class="btn-delete" onclick="deleteQuestion({{ p['id'] }})">Borrar</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const form = document.getElementById('question-form');
+        const btnCancel = document.getElementById('btn-cancel');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                id: document.getElementById('q-id').value,
+                proceso: document.getElementById('q-proceso').value,
+                auditor: document.getElementById('q-auditor').value,
+                auditado: document.getElementById('q-auditado').value,
+                grupo: document.getElementById('q-grupo').value,
+                punto: document.getElementById('q-punto').value,
+                pregunta: document.getElementById('q-pregunta').value,
+                que_esperamos: document.getElementById('q-que_esperamos').value,
+                periodicidad: document.getElementById('q-periodicidad').value
+            };
+
+            const response = await fetch('/api?action=save_question', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Error al guardar');
+            }
+        };
+
+        function editBtnClick(btn) {
+            const q = JSON.parse(btn.getAttribute('data-question'));
+            editQuestion(q);
+        }
+
+        function editQuestion(q) {
+            document.getElementById('form-title').textContent = 'Editar Pregunta ID: ' + q.id;
+            document.getElementById('q-id').value = q.id;
+            document.getElementById('q-proceso').value = q.proceso;
+            document.getElementById('q-auditor').value = q.auditor;
+            document.getElementById('q-auditado').value = q.auditado;
+            document.getElementById('q-grupo').value = q.grupo;
+            document.getElementById('q-punto').value = q.punto;
+            document.getElementById('q-pregunta').value = q.pregunta;
+            document.getElementById('q-que_esperamos').value = q.que_esperamos;
+            document.getElementById('q-periodicidad').value = q.periodicidad;
+
+            btnCancel.style.display = 'inline-block';
+            window.scrollTo(0, 0);
+        }
+
+        btnCancel.onclick = () => {
+            form.reset();
+            document.getElementById('q-id').value = '';
+            document.getElementById('form-title').textContent = 'Nueva Pregunta';
+            btnCancel.style.display = 'none';
+        };
+
+        async function deleteQuestion(id) {
+            if (confirm('¿Estás seguro de que quieres borrar esta pregunta? Se borrarán también sus auditorías asociadas.')) {
+                const response = await fetch('/api?action=delete_question&id=' + id);
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Error al borrar');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

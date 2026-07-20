@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Manual de uso · Auditorías KH</title>
+<link rel="icon" type="image/png" href="/static/ico.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f4f4f4; color: #222; }
+    .toolbar { position: sticky; top: 0; background: #800000; color: white; padding: 10px 20px; display:flex; justify-content: space-between; align-items: center; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    .toolbar a { color: white; text-decoration: none; font-weight: bold; }
+    .toolbar button { background: white; color: #800000; border: none; padding: 8px 16px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+    .toolbar button:hover { background: #f0d0d0; }
+
+    #manual { background: white; max-width: 820px; margin: 20px auto; padding: 40px; box-shadow: 0 0 10px rgba(0,0,0,0.08); }
+
+    /* Portada */
+    .cover { text-align: center; padding: 80px 20px 40px; page-break-after: always; }
+    .cover img { max-width: 220px; margin-bottom: 30px; }
+    .cover h1 { font-size: 2.4em; color: #800000; margin: 10px 0 5px; }
+    .cover h2 { font-size: 1.3em; color: #666; font-weight: normal; margin-top: 0; }
+    .cover .meta { margin-top: 60px; font-size: 0.95em; color: #444; }
+
+    /* Tipografía */
+    h1.section { color: #800000; border-bottom: 3px solid #800000; padding-bottom: 8px; margin-top: 40px; page-break-before: always; }
+    h1.section:first-of-type { page-break-before: avoid; }
+    h2 { color: #800000; margin-top: 28px; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+    h3 { color: #555; margin-top: 22px; }
+    p { line-height: 1.55; text-align: justify; }
+    ul, ol { line-height: 1.55; }
+    li { margin-bottom: 4px; }
+    code { background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-family: Consolas, monospace; font-size: 0.92em; }
+    .note { background: #fff7e0; border-left: 4px solid #d4a000; padding: 10px 14px; margin: 12px 0; }
+    .warn { background: #ffeaea; border-left: 4px solid #c00; padding: 10px 14px; margin: 12px 0; }
+    .ok { background: #e9f7e9; border-left: 4px solid #2c8a2c; padding: 10px 14px; margin: 12px 0; }
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.92em; }
+    th, td { border: 1px solid #ccc; padding: 7px 9px; text-align: left; vertical-align: top; }
+    th { background: #800000; color: white; }
+    tr:nth-child(even) td { background: #fafafa; }
+
+    /* Toc */
+    .toc { background: #fafafa; border: 1px solid #ddd; padding: 18px 24px; border-radius: 4px; margin-bottom: 30px; }
+    .toc h2 { margin-top: 0; border: none; }
+    .toc ol { margin: 0; padding-left: 22px; }
+    .toc li { margin-bottom: 4px; }
+
+    @media print {
+        .toolbar { display: none; }
+        body { background: white; }
+        #manual { box-shadow: none; margin: 0; padding: 25px; max-width: 100%; }
+    }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+    <a href="/index">&laquo; Volver al panel</a>
+    <span><strong>Manual de uso · Aplicación de Auditorías</strong></span>
+    <button onclick="exportPDF()">📥 Descargar PDF</button>
+</div>
+
+<div id="manual">
+
+    <!-- ============ PORTADA ============ -->
+    <div class="cover">
+        <img src="/static/Logo.png" alt="KH Logo">
+        <h1>Manual de Usuario</h1>
+        <h2>Aplicación de Auditorías · Process Confirmation</h2>
+        <div class="meta">
+            Versión 1.0 · Mayo 2026<br>
+            Grupo KH Vives
+        </div>
+    </div>
+
+    <!-- ============ ÍNDICE ============ -->
+    <div class="toc">
+        <h2>Índice</h2>
+        <ol>
+            <li>Introducción</li>
+            <li>Acceso al sistema (login)</li>
+            <li>Manual del Auditor
+                <ol type="a">
+                    <li>Pantalla principal</li>
+                    <li>Filtros disponibles</li>
+                    <li>Lectura de la pregunta</li>
+                    <li>Guardar una respuesta</li>
+                    <li>Histórico de respuestas</li>
+                    <li>Navegación y búsqueda</li>
+                </ol>
+            </li>
+            <li>Manual del Administrador
+                <ol type="a">
+                    <li>Diferencias respecto al auditor</li>
+                    <li>Gestionar Preguntas</li>
+                    <li>Edición y borrado del histórico</li>
+                    <li>Informes y exportación a PDF</li>
+                </ol>
+            </li>
+            <li>Periodicidades, auditores y auditados</li>
+            <li>Estructura de datos</li>
+            <li>Scripts de mantenimiento</li>
+            <li>Resolución de problemas frecuentes</li>
+        </ol>
+    </div>
+
+    <!-- ============ 1. INTRODUCCIÓN ============ -->
+    <h1 class="section">1. Introducción</h1>
+    <p>
+        Esta aplicación, denominada <strong>Process Confirmation</strong>, sirve para registrar
+        las auditorías diarias y periódicas que se realizan en planta. Cada
+        <em>pregunta</em> está asociada a un <em>auditor</em>, a un <em>auditado</em>, a un
+        <em>grupo</em> (Proceso, Calidad, Orden, etc.) y a una <em>periodicidad</em>
+        (diaria, lunes, martes, miércoles, jueves, viernes o mensual).
+    </p>
+    <p>
+        El auditor accede al sistema, selecciona su nombre, ve únicamente las
+        preguntas que le corresponden y registra cada día si el punto auditado está
+        <strong>OK</strong> o <strong>NOK</strong>, añadiendo un comentario cuando lo
+        considera oportuno (especialmente si hay una no conformidad). El administrador
+        gestiona el catálogo de preguntas, consulta los informes globales y puede
+        modificar registros históricos.
+    </p>
+
+    <h2>1.1 Características principales</h2>
+    <ul>
+        <li>Acceso diferenciado por rol: <strong>auditor</strong> o <strong>administrador</strong>.</li>
+        <li>Filtros por auditor, auditado y periodicidad.</li>
+        <li>Histórico completo de respuestas por pregunta.</li>
+        <li>Informes con gráficas: NOK por semana, auditorías por auditor, NOK por puesto auditado.</li>
+        <li>Exportación de informes a PDF en formato A4.</li>
+        <li>Buscador de texto libre dentro del cuestionario.</li>
+    </ul>
+
+    <!-- ============ 2. ACCESO ============ -->
+    <h1 class="section">2. Acceso al sistema (login)</h1>
+    <p>
+        Para acceder, abra el navegador y vaya a
+        <code>{{ request.host_url }}login</code>.
+        La pantalla de login ofrece dos formas de entrar:
+    </p>
+
+    <h2>2.1 Acceso como auditor</h2>
+    <ol>
+        <li>En la parte superior, despliegue la lista <strong>Seleccione su nombre</strong>.</li>
+        <li>Elija el auditor con el que se identifica (por ejemplo <em>J. Sección A</em>, <em>Optimizador B</em>, <em>Supervisor A</em>…).</li>
+        <li>Pulse <strong>Entrar</strong>.</li>
+    </ol>
+    <div class="note">
+        La lista de auditores se construye automáticamente desde la base de datos.
+        Cuando se añaden preguntas nuevas para un auditor nuevo (por ejemplo
+        <em>Supervisor A</em> o <em>Supervisor B</em>), aparece en el desplegable sin
+        configuración adicional.
+    </div>
+
+    <h2>2.2 Acceso como administrador</h2>
+    <ol>
+        <li>En la parte inferior del login (sección <em>O administrador</em>) escriba el usuario de administrador que tenga asignado.</li>
+        <li>Introduzca la contraseña que tenga asignada el administrador.</li>
+        <li>Pulse <strong>Entrar como Admin</strong>.</li>
+    </ol>
+    <div class="warn">
+        La contraseña del administrador está definida en la configuración del servidor
+        (variable <code>ADMIN_USERS</code> del archivo <code>.env</code>).
+        Cámbiela ante cualquier sospecha de filtración y no la comparta con perfiles de auditor.
+    </div>
+
+    <!-- ============ 3. MANUAL AUDITOR ============ -->
+    <h1 class="section">3. Manual del Auditor</h1>
+
+    <h2>3.1 Pantalla principal</h2>
+    <p>
+        Tras iniciar sesión como auditor, se carga la pantalla del cuestionario
+        (<em>CUESTIONARIO PROCESS CONFIRMATION</em>). Está dividida en dos zonas:
+    </p>
+    <ul>
+        <li><strong>Barra lateral izquierda:</strong> con el logotipo de KH y los filtros disponibles.</li>
+        <li><strong>Panel central:</strong> con los campos de la pregunta activa y el histórico de respuestas.</li>
+    </ul>
+
+    <h2>3.2 Filtros disponibles</h2>
+    <p>
+        El auditor no puede cambiar el filtro de <em>Auditor</em> (se aplica
+        automáticamente con su usuario). Sí puede afinar la búsqueda mediante:
+    </p>
+    <ul>
+        <li><strong>Auditado:</strong> rol que está siendo auditado. Por ejemplo: <em>Operario</em>, <em>Carretillero</em>, <em>Remolcador</em>, <em>Jefe Sección</em>…</li>
+        <li><strong>Periodicidad:</strong> 0-DIARIO, 1-LUNES, 2-MARTES, 3-MIERCOLES, 4-JUEVES, 5-VIERNES o MENSUAL.</li>
+    </ul>
+    <p>
+        Al seleccionar un filtro, la lista de preguntas se actualiza al instante.
+        Pulse sobre <strong>— Todos —</strong> para eliminar el filtro de esa categoría.
+    </p>
+
+    <h2>3.3 Lectura de la pregunta</h2>
+    <p>
+        Una vez aplicados los filtros, se muestra la primera pregunta. El panel
+        central contiene los siguientes campos en modo solo lectura:
+    </p>
+    <table>
+        <tr><th>Campo</th><th>Descripción</th></tr>
+        <tr><td>PROCESO</td><td>Fabricación, Secuencia o Troquelados.</td></tr>
+        <tr><td>AUDITOR</td><td>Su propio rol auditor.</td></tr>
+        <tr><td>AUDITADO</td><td>A quién se audita esta pregunta.</td></tr>
+        <tr><td>PUNTO</td><td>Número de ítem dentro del catálogo.</td></tr>
+        <tr><td>PERIODICIDAD</td><td>Frecuencia con la que se debe responder.</td></tr>
+        <tr><td>GRUPO</td><td>Bloque al que pertenece (Proceso, Calidad, Orden…).</td></tr>
+        <tr><td>PREGUNTA</td><td>Texto exacto que debe comprobarse en planta.</td></tr>
+        <tr><td>QUÉ ESPERAMOS</td><td>Criterio para considerar que el punto está OK.</td></tr>
+    </table>
+
+    <h2>3.4 Guardar una respuesta</h2>
+    <p>
+        Justo debajo del bloque de información de la pregunta hay una tabla con el
+        histórico. La primera fila (la superior) es la fila <em>nueva</em> y permite
+        registrar la respuesta del día:
+    </p>
+    <ol>
+        <li>Verifique la <strong>Fecha</strong> (por defecto es hoy; cámbiela si registra una auditoría anterior).</li>
+        <li>Seleccione <strong>OK</strong>, <strong>NOK</strong> o <strong>No aplica</strong> en el desplegable.</li>
+        <li>Introduzca el <strong>Nº Operario</strong> que ha realizado la intervención auditada (texto libre).</li>
+        <li>Opcionalmente, escriba un <strong>Comentario</strong>. <span class="ok" style="padding: 2px 6px;">Recomendado siempre en NOK.</span></li>
+        <li>Pulse <strong>Guardar</strong>.</li>
+    </ol>
+    <div class="note">
+        El estado <strong>No aplica</strong> se usa cuando la pregunta no es de
+        aplicación en ese día concreto (por ejemplo, porque la línea no estuvo activa
+        o la operación no se llevó a cabo). Queda registrada igualmente en el
+        histórico para dejar constancia.
+    </div>
+    <div class="note">
+        Si un día no se ha podido auditar un punto, no se inserta ningún registro:
+        simplemente esa fecha queda en blanco en el histórico.
+    </div>
+
+    <h2>3.5 Histórico de respuestas</h2>
+    <p>
+        Debajo de la fila de registro nuevo aparecen, ordenadas de más reciente a
+        más antigua, todas las auditorías realizadas previamente sobre esa misma
+        pregunta. Cada fila muestra:
+    </p>
+    <ul>
+        <li>Fecha de la auditoría.</li>
+        <li>Resultado <strong>OK</strong>, <strong>NOK</strong> o <strong>No aplica</strong>.</li>
+        <li>Nº de operario que realizó la intervención.</li>
+        <li>Comentario asociado (si lo había).</li>
+    </ul>
+    <p>
+        Como auditor solo puede consultar el histórico, no modificarlo. Si detecta
+        un error en un registro antiguo debe avisar al administrador.
+    </p>
+
+    <h2>3.6 Navegación y búsqueda</h2>
+    <p>Bajo la tabla del histórico, dispone de:</p>
+    <ul>
+        <li>Botones <strong>|«  «  »  »|</strong> para moverse por las preguntas filtradas.</li>
+        <li>Contador <strong>Registro X de Y</strong>.</li>
+        <li>Buscador de texto libre que busca dentro de la pregunta, el "qué esperamos", el proceso y el grupo.</li>
+        <li>Contador <strong>Nº de Preguntas Ítem</strong> con el total de preguntas tras aplicar todos los filtros.</li>
+    </ul>
+
+    <!-- ============ 4. MANUAL ADMIN ============ -->
+    <h1 class="section">4. Manual del Administrador</h1>
+
+    <h2>4.1 Diferencias respecto al auditor</h2>
+    <p>
+        Al iniciar sesión como <strong>administrador</strong>, la interfaz es la misma que
+        ve el auditor, pero con tres añadidos importantes:
+    </p>
+    <ul>
+        <li>Aparece un filtro adicional de <strong>Auditor</strong> en la barra lateral, para poder ver las preguntas de cualquier auditor.</li>
+        <li>En la barra superior derecha aparecen los enlaces <strong>📈 Informes</strong> y <strong>⚙️ Gestionar Preguntas</strong>.</li>
+        <li>En el histórico de cada pregunta puede <strong>editar</strong> o <strong>borrar</strong> registros (los auditores no pueden).</li>
+    </ul>
+
+    <h2>4.2 Gestionar Preguntas</h2>
+    <p>
+        Pulse el enlace <strong>⚙️ Gestionar Preguntas</strong> de la barra superior
+        para acceder a <code>/admin_preguntas</code>. Esta pantalla permite:
+    </p>
+    <ul>
+        <li>Crear una pregunta nueva rellenando el formulario superior.</li>
+        <li>Editar cualquier pregunta existente pulsando <strong>Editar</strong> en su fila.</li>
+        <li>Borrar una pregunta con <strong>Borrar</strong> (también se eliminan sus auditorías históricas).</li>
+    </ul>
+
+    <h3>4.2.1 Campos del formulario de pregunta</h3>
+    <table>
+        <tr><th>Campo</th><th>Valores válidos</th></tr>
+        <tr><td>Proceso</td><td>Texto libre (FABRICACIÓN, SECUENCIA, TROQUELADOS…)</td></tr>
+        <tr><td>Auditor</td><td>Coordinación, J. Sección A/B, Laboratorio, Optimizador A/B/C, Resp. Planta, Supervisor A, Supervisor B.</td></tr>
+        <tr><td>Auditado</td><td>Carretillero, Jefe Sección, Operario, Optimizador, Remolcador, Resp. Planta, Tec. Mantenimiento.</td></tr>
+        <tr><td>Grupo</td><td>Texto libre (Proceso, Calidad, Orden, Documentación…)</td></tr>
+        <tr><td>Punto</td><td>Número entero. Sirve para ordenar dentro de un mismo bloque.</td></tr>
+        <tr><td>Periodicidad</td><td>0-DIARIO, 1-LUNES, 2-MARTES, 3-MIERCOLES, 4-JUEVES, 5-VIERNES, MENSUAL.</td></tr>
+        <tr><td>Pregunta</td><td>Texto que verá el auditor.</td></tr>
+        <tr><td>Qué esperamos</td><td>Criterio para validar como OK.</td></tr>
+    </table>
+    <div class="warn">
+        Si se borra una pregunta se eliminan <strong>todas</strong> sus auditorías históricas.
+        Considere desactivarla o cambiarle el auditor antes de borrarla si quiere conservar el histórico.
+    </div>
+
+    <h2>4.3 Edición y borrado del histórico</h2>
+    <p>
+        Volviendo a la pantalla del cuestionario (<code>/index</code>), si está
+        autenticado como administrador verá una columna <strong>Acciones</strong>
+        en la tabla del histórico, con dos botones por fila:
+    </p>
+    <ul>
+        <li><strong>Guardar:</strong> aplica los cambios de fecha, OK/NOK o comentario hechos directamente en la fila.</li>
+        <li><strong>Borrar:</strong> elimina ese registro histórico.</li>
+    </ul>
+
+    <h2>4.4 Informes y exportación a PDF</h2>
+    <p>
+        Pulse <strong>📈 Informes</strong> en la barra superior para acceder a
+        <code>/reports</code>. Se muestran tres gráficas:
+    </p>
+    <ol>
+        <li><strong>Respuestas NOK por Semana</strong> (barra): permite ver tendencias semanales de no conformidades.</li>
+        <li><strong>Auditorías por Auditor</strong> (barras agrupadas OK/NOK): muestra el volumen de auditorías que ha registrado cada auditor.</li>
+        <li><strong>NOK por puesto Auditado</strong>: distribución de no conformidades por puesto, segmentadas por auditor.</li>
+    </ol>
+    <p>
+        En la cabecera de la página hay un botón <strong>📥 Exportar a PDF (A4)</strong>
+        que genera un archivo descargable con las tres gráficas en formato A4.
+    </p>
+
+    <!-- ============ 5. PERIODICIDADES / ROLES ============ -->
+    <h1 class="section">5. Periodicidades, auditores y auditados</h1>
+
+    <h2>5.1 Periodicidades</h2>
+    <table>
+        <tr><th>Código</th><th>Significado</th></tr>
+        <tr><td>0-DIARIO</td><td>Se debe auditar cada día laborable.</td></tr>
+        <tr><td>1-LUNES</td><td>Una vez por semana, los lunes.</td></tr>
+        <tr><td>2-MARTES</td><td>Una vez por semana, los martes.</td></tr>
+        <tr><td>3-MIERCOLES</td><td>Una vez por semana, los miércoles.</td></tr>
+        <tr><td>4-JUEVES</td><td>Una vez por semana, los jueves.</td></tr>
+        <tr><td>5-VIERNES</td><td>Una vez por semana, los viernes.</td></tr>
+        <tr><td>MENSUAL</td><td>Una vez al mes.</td></tr>
+    </table>
+
+    <h2>5.2 Roles auditores</h2>
+    <p>Los roles auditores actualmente configurados son:</p>
+    <ul>
+        <li>Coordinación</li>
+        <li>J. Sección A · J. Sección B</li>
+        <li>Laboratorio</li>
+        <li>Optimizador A · Optimizador B · Optimizador C</li>
+        <li>Resp. Planta</li>
+        <li>Supervisor A · Supervisor B <span style="color:#2c8a2c;">(nuevos)</span></li>
+    </ul>
+
+    <h2>5.3 Roles auditados</h2>
+    <ul>
+        <li>Carretillero <span style="color:#2c8a2c;">(nuevo)</span></li>
+        <li>Jefe Sección</li>
+        <li>Operario</li>
+        <li>Optimizador</li>
+        <li>Remolcador <span style="color:#2c8a2c;">(nuevo)</span></li>
+        <li>Resp. Planta</li>
+        <li>Tec. Mantenimiento</li>
+    </ul>
+
+    <!-- ============ 6. ESTRUCTURA DE DATOS ============ -->
+    <h1 class="section">6. Estructura de datos</h1>
+    <p>
+        La aplicación utiliza una base de datos SQLite ubicada en
+        <code>data/audit.db</code> dentro de la carpeta de la aplicación. Contiene dos tablas:
+    </p>
+
+    <h2>6.1 Tabla <code>preguntas</code></h2>
+    <table>
+        <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+        <tr><td>id</td><td>INTEGER PK</td><td>Identificador autonumérico.</td></tr>
+        <tr><td>proceso</td><td>TEXT</td><td>Proceso al que pertenece.</td></tr>
+        <tr><td>auditor</td><td>TEXT</td><td>Rol del auditor responsable.</td></tr>
+        <tr><td>auditado</td><td>TEXT</td><td>Rol auditado.</td></tr>
+        <tr><td>grupo</td><td>TEXT</td><td>Bloque de la pregunta.</td></tr>
+        <tr><td>punto</td><td>INTEGER</td><td>Número del ítem.</td></tr>
+        <tr><td>pregunta</td><td>TEXT</td><td>Texto que se le muestra al auditor.</td></tr>
+        <tr><td>que_esperamos</td><td>TEXT</td><td>Criterio de aceptación.</td></tr>
+        <tr><td>periodicidad</td><td>TEXT</td><td>Periodicidad codificada (0-DIARIO, 1-LUNES…).</td></tr>
+    </table>
+
+    <h2>6.2 Tabla <code>auditorias</code></h2>
+    <table>
+        <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+        <tr><td>id</td><td>INTEGER PK</td><td>Identificador autonumérico.</td></tr>
+        <tr><td>pregunta_id</td><td>INTEGER FK</td><td>Referencia a <code>preguntas.id</code>.</td></tr>
+        <tr><td>fecha</td><td>DATE</td><td>Fecha de la auditoría (por defecto, fecha actual).</td></tr>
+        <tr><td>ok_nok</td><td>TEXT</td><td>"OK", "NOK" o "No aplica".</td></tr>
+        <tr><td>numero_operario</td><td>TEXT</td><td>Identificador del operario que realiza la intervención auditada.</td></tr>
+        <tr><td>comentario</td><td>TEXT</td><td>Texto libre (opcional).</td></tr>
+    </table>
+
+    <!-- ============ 7. SCRIPTS ============ -->
+    <h1 class="section">7. Scripts de mantenimiento</h1>
+    <p>
+        En la carpeta del proyecto existen varios scripts de utilidad heredados de la
+        versión anterior. Solo deben utilizarse con conocimiento de lo que hacen y,
+        salvo el primer arranque, de forma puntual.
+    </p>
+
+    <table>
+        <tr><th>Script</th><th>Función</th></tr>
+        <tr><td><code>seed</code></td><td>Crea las tablas y carga el catálogo inicial de preguntas. <strong>Destruye los datos existentes.</strong></td></tr>
+        <tr><td><code>seed_supervisors</code></td><td>Inserta las preguntas de Supervisor A y Supervisor B. Protegido contra duplicados.</td></tr>
+        <tr><td><code>seed_historico_supervisores</code></td><td>Genera el histórico de auditorías para Supervisor A y B desde 01/09/2025 hasta hoy (96% OK · 4% NOK, comentarios contextuales en ~25% de las OK).</td></tr>
+        <tr><td><code>fix_comentarios_ok_supervisores</code></td><td>Vacía ~75% de los comentarios OK ya cargados (las NOK no se tocan).</td></tr>
+        <tr><td><code>migrate_add_operario</code></td><td>Migración que añade el campo <code>numero_operario</code> a la tabla <code>auditorias</code>. Ejecutar una sola vez.</td></tr>
+        <tr><td><code>seed_random</code></td><td>Carga datos aleatorios para pruebas.</td></tr>
+        <tr><td><code>seed_ok_comments</code> / <code>seed_ok_comments_contextual</code></td><td>Regeneran los comentarios OK con plantillas o de forma contextual.</td></tr>
+    </table>
+
+    <div class="warn">
+        Los scripts <code>seed</code> y <code>seed_random</code> destruyen y
+        recrean las tablas. <strong>No los ejecute en producción</strong> si quiere
+        conservar el histórico.
+    </div>
+
+    <!-- ============ 8. PROBLEMAS ============ -->
+    <h1 class="section">8. Resolución de problemas frecuentes</h1>
+
+    <h2>8.1 No puedo iniciar sesión como auditor</h2>
+    <ul>
+        <li>Compruebe que su rol aparece en el desplegable. Si no aparece, no tiene preguntas asignadas en la base de datos.</li>
+        <li>Pida al administrador que cree al menos una pregunta para ese auditor (su nombre aparecerá automáticamente).</li>
+    </ul>
+
+    <h2>8.2 No veo preguntas tras aplicar los filtros</h2>
+    <ul>
+        <li>Pulse <strong>— Todos —</strong> en cada filtro para deshacer la selección.</li>
+        <li>Borre el texto del buscador (esquina inferior derecha) por si está filtrando texto.</li>
+        <li>Confirme con el administrador que existen preguntas para esa combinación de auditor + auditado + periodicidad.</li>
+    </ul>
+
+    <h2>8.3 Guardo una auditoría y desaparece de la pantalla</h2>
+    <p>
+        No desaparece, sino que se incorpora al histórico debajo de la fila de
+        registro nuevo. Si no la ve, refresque la página o vuelva a seleccionar la
+        pregunta con los botones de navegación.
+    </p>
+
+    <h2>8.4 La exportación de informes a PDF no descarga nada</h2>
+    <ul>
+        <li>Espere unos segundos: con muchas gráficas la generación tarda.</li>
+        <li>Confirme que su navegador permite descargas desde la dirección del servidor.</li>
+        <li>Si sigue sin funcionar, pruebe en otro navegador (Chrome o Edge funcionan mejor con la librería html2pdf).</li>
+    </ul>
+
+    <h2>8.5 He ejecutado un script y quiero deshacerlo</h2>
+    <ul>
+        <li>Los scripts <code>seed_supervisors</code> y <code>seed_historico_supervisores</code> incluyen protección contra duplicados: si ya se ejecutaron, vuelven a salir sin tocar nada.</li>
+        <li>Para deshacer la inserción de Supervisor A/B, borre desde la pantalla de Gestionar Preguntas las que apuntan a esos auditores (se eliminan también sus auditorías).</li>
+        <li>Para regenerar el histórico, primero hay que borrar los registros existentes de Supervisor A/B en el rango de fechas.</li>
+    </ul>
+
+    <div class="ok" style="margin-top: 40px;">
+        <strong>Fin del manual.</strong> Para cualquier duda no recogida en este documento,
+        contacte con el administrador del sistema.
+    </div>
+
+</div>
+
+<script>
+function exportPDF() {
+    const element = document.getElementById('manual');
+    const opt = {
+        margin:       [10, 10, 10, 10],
+        filename:     'Manual_Auditorias_KH.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+    html2pdf().set(opt).from(element).save();
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUESTIONARIO PROCESS CONFIRMATION</title>
+    <link rel="icon" type="image/png" href="/static/ico.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+        .sidebar {
+            width: 250px;
+            padding-right: 20px;
+        }
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sidebar-logo img {
+            max-width: 150px;
+            height: auto;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .sidebar {
+                width: 100%;
+                padding-right: 0;
+                margin-bottom: 20px;
+            }
+            .main-content {
+                width: 100%;
+            }
+            .form-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .full-width {
+                grid-column: span 1 !important;
+            }
+            .user-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .user-info a {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+        }
+        .sidebar h2 {
+            color: #800000;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        .sidebar h3 {
+            color: #800000;
+            font-size: 1em;
+            margin-top: 20px;
+            margin-bottom: 5px;
+        }
+        .filter-box {
+            background: white;
+            border: 1px solid #800000;
+            padding: 5px;
+            height: 150px;
+            overflow-y: auto;
+            cursor: pointer;
+        }
+        .filter-item {
+            padding: 3px 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .filter-item:hover {
+            background-color: #fdeaea;
+        }
+        .filter-item.selected {
+            background-color: #800000;
+            color: white;
+        }
+        .manual-btn {
+            display: block;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #800000;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .manual-btn:hover {
+            background-color: #a00000;
+        }
+        .main-content {
+            flex-grow: 1;
+            background: white;
+            border: 2px solid #800000;
+            padding: 20px;
+            position: relative;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            font-weight: bold;
+            font-size: 1.5em;
+            color: #333;
+        }
+        .logo span {
+            color: #800000;
+        }
+        .title {
+            font-size: 1.4em;
+            color: #004080;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .form-field {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-field label {
+            color: #004080;
+            font-weight: bold;
+            font-size: 0.8em;
+            margin-bottom: 3px;
+        }
+        .form-field input, .form-field select, .form-field textarea {
+            flex-grow: 1;
+            padding: 5px;
+            border: 1px solid #004080;
+            background-color: #e0e6f0;
+            border-radius: 4px;
+        }
+        .full-width {
+            grid-column: span 3;
+            display: flex;
+            flex-direction: column;
+        }
+        .full-width label {
+            margin-bottom: 5px;
+        }
+        .full-width textarea {
+            height: 80px;
+        }
+        .results-table-container {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            height: 250px;
+            overflow: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: #d0d0d0;
+            border: 1px solid #aaa;
+            padding: 5px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        th.yellow {
+            background-color: #ffffcc;
+        }
+        td {
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .nav-btn {
+            background-color: #add8e6;
+            border: 1px solid #004080;
+            padding: 5px 10px;
+            margin-right: 2px;
+            cursor: pointer;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 30px;
+        }
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .record-info {
+            margin-left: 20px;
+            font-size: 0.9em;
+            color: #800000;
+        }
+        .user-info {
+            background-color: #fff;
+            padding: 10px 20px;
+            border-bottom: 1px solid #800000;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            font-size: 0.9em;
+        }
+        .user-info a {
+            color: #800000;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 15px;
+        }
+        .item-counter {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .item-counter label {
+            color: #800000;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .item-counter span {
+            background-color: #004080;
+            color: white;
+            padding: 5px 15px;
+            font-weight: bold;
+        }
+        .new-audit-row {
+            background-color: #fdeaea;
+        }
+        .save-btn {
+            background-color: #800000;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="/static/Logo.png" alt="KH KNOW HOW">
+            </div>
+            <h2>SELECCIONA</h2>
+            <div style="text-align: center; color: #800000; font-size: 2em;">&darr;</div>
+
+            {% if is_admin %}
+            <h3>Auditor</h3>
+            <div id="filter-auditor" class="filter-box">
+                <div class="filter-item" data-value="CALIDAD CLIENTE">CALIDAD CLIENTE</div>
+                <div class="filter-item" data-value="COORDINACIÓN">COORDINACIÓN</div>
+                <div class="filter-item" data-value="J. SECCIÓN A">J. SECCIÓN A</div>
+                <div class="filter-item" data-value="J. SECCIÓN B">J. SECCIÓN B</div>
+                <div class="filter-item" data-value="LABORATORIO">LABORATORIO</div>
+                <div class="filter-item" data-value="OPTIMIZADOR A">OPTIMIZADOR A</div>
+                <div class="filter-item" data-value="OPTIMIZADOR B">OPTIMIZADOR B</div>
+                <div class="filter-item" data-value="OPTIMIZADOR C">OPTIMIZADOR C</div>
+                <div class="filter-item" data-value="R. PLANTA">R. PLANTA</div>
+                <div class="filter-item" data-value="SUPERVISOR A">SUPERVISOR A</div>
+                <div class="filter-item" data-value="SUPERVISOR B">SUPERVISOR B</div>
+            </div>
+            {% endif %}
+
+            <h3>Auditado</h3>
+            <div id="filter-auditado" class="filter-box">
+                <!-- Dynamic -->
+            </div>
+
+            <h3>Periodicidad</h3>
+            <div id="filter-periodicidad" class="filter-box">
+                <!-- Dynamic -->
+            </div>
+
+            <a href="/manual" target="_blank" class="manual-btn">📖 Manual de Ayuda</a>
+        </div>
+
+        <div class="main-content">
+            <div class="user-info">
+                <span>Conectado como: <strong>{{ user }}</strong></span>
+                {% if is_admin %}
+                    <a href="/reports">📈 Informes</a>
+                    <a href="/admin_preguntas">⚙️ Gestionar Preguntas</a>
+                {% endif %}
+                <a href="/logout">🚪 Cerrar Sesión</a>
+            </div>
+            <div class="header">
+                <div class="title">CUESTIONARIO PROCESS CONFIRMATION</div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field">
+                    <label>PROCESO</label>
+                    <input type="text" id="field-proceso" readonly>
+                </div>
+                <div class="form-field">
+                    <label>AUDITOR</label>
+                    <input type="text" id="field-auditor" readonly>
+                </div>
+                <div class="form-field">
+                    <label>AUDITADO</label>
+                    <input type="text" id="field-auditado" readonly>
+                </div>
+                <div class="form-field">
+                    <label>PUNTO</label>
+                    <input type="text" id="field-punto" readonly>
+                </div>
+                <div class="form-field">
+                    <label>PERIODICIDAD</label>
+                    <input type="text" id="field-periodicidad" readonly>
+                </div>
+                <div class="form-field">
+                    <label>GRUPO</label>
+                    <input type="text" id="field-grupo" readonly>
+                </div>
+
+                <div class="full-width">
+                    <label>PREGUNTA</label>
+                    <textarea id="field-pregunta" readonly></textarea>
+                </div>
+
+                <div class="full-width">
+                    <label>QUE ESPERAMOS</label>
+                    <textarea id="field-que-esperamos" readonly></textarea>
+                </div>
+            </div>
+
+            <div class="results-table-container">
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 115px;">Fecha</th>
+                            <th style="width: 95px;" class="yellow">OK/NOK</th>
+                            <th style="width: 110px;">Nº Operario</th>
+                            <th class="yellow">Comentario</th>
+                            {% if is_admin %}
+                            <th style="width: 95px;">Acciones</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Results and new entry row -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="nav-controls">
+                <button id="btn-first" class="nav-btn" title="Primero">|&laquo;</button>
+                <button id="btn-prev" class="nav-btn" title="Anterior">&laquo;</button>
+                <button id="btn-next" class="nav-btn" title="Siguiente">&raquo;</button>
+                <button id="btn-last" class="nav-btn" title="Último">&raquo;|</button>
+                <div id="nav-info" class="record-info">Registro: 1 de 1</div>
+                <div style="margin-left: auto; display: flex; align-items: center;">
+                    <span style="font-size: 0.9em; margin-right: 5px;">Buscar</span>
+                    <input type="text" id="search-input" style="border: 1px solid #aaa; padding: 2px;">
+                </div>
+            </div>
+
+            <div class="item-counter">
+                <label>Nº de Preguntas Ítem</label>
+                <span id="counter-val">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestionIds = [];
+        let currentIndex = -1;
+        let selectedAuditor = {{ ('' if is_admin else user) | tojson }};
+        let selectedAuditado = '';
+        let selectedPeriodicidad = '';
+        let searchQuery = '';
+
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            searchQuery = e.target.value.toLowerCase();
+            loadQuestions();
+        });
+
+        // Filter Click Handling using Delegation
+        document.querySelector('.sidebar').addEventListener('click', (e) => {
+            const item = e.target.closest('.filter-item');
+            if (!item) return;
+
+            const parent = item.parentElement;
+            parent.querySelectorAll('.filter-item').forEach(i => i.classList.remove('selected'));
+            item.classList.add('selected');
+
+            if (parent.id === 'filter-auditor') {
+                selectedAuditor = item.dataset.value;
+                selectedAuditado = ''; // Reset sub-filters when auditor changes
+                selectedPeriodicidad = '';
+                loadFilters();
+            }
+            if (parent.id === 'filter-auditado') selectedAuditado = item.dataset.value;
+            if (parent.id === 'filter-periodicidad') selectedPeriodicidad = item.dataset.value;
+
+            loadQuestions();
+        });
+
+        async function loadFilters() {
+            const url = `/api?action=get_filter_values&auditor=${encodeURIComponent(selectedAuditor)}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            const renderFilter = (id, values, currentVal) => {
+                const box = document.getElementById(id);
+                box.innerHTML = '<div class="filter-item' + (!currentVal ? ' selected' : '') + '" data-value="">-- Todos --</div>';
+                values.forEach(v => {
+                    box.innerHTML += `<div class="filter-item${v === currentVal ? ' selected' : ''}" data-value="${v}">${v}</div>`;
+                });
+            };
+
+            renderFilter('filter-auditado', data.auditados, selectedAuditado);
+            renderFilter('filter-periodicidad', data.periodicidades, selectedPeriodicidad);
+        }
+
+        async function loadQuestions() {
+            const url = `/api?action=get_questions&auditor=${encodeURIComponent(selectedAuditor)}&auditado=${encodeURIComponent(selectedAuditado)}&periodicidad=${encodeURIComponent(selectedPeriodicidad)}&search=${encodeURIComponent(searchQuery)}`;
+            const response = await fetch(url);
+            let ids = await response.json();
+
+            currentQuestionIds = ids;
+            document.getElementById('counter-val').textContent = currentQuestionIds.length;
+
+            if (currentQuestionIds.length > 0) {
+                currentIndex = 0;
+                loadQuestionDetails(currentQuestionIds[currentIndex]);
+            } else {
+                currentIndex = -1;
+                clearFields();
+            }
+            updateNav();
+        }
+
+        async function loadQuestionDetails(id) {
+            const response = await fetch(`/api?action=get_question_details&id=${id}`);
+            const q = await response.json();
+
+            document.getElementById('field-proceso').value = q.proceso || '';
+            document.getElementById('field-auditor').value = q.auditor || '';
+            document.getElementById('field-auditado').value = q.auditado || '';
+            document.getElementById('field-punto').value = q.punto || '';
+            document.getElementById('field-periodicidad').value = q.periodicidad || '';
+            document.getElementById('field-grupo').value = q.grupo || '';
+            document.getElementById('field-pregunta').value = q.pregunta || '';
+            document.getElementById('field-que-esperamos').value = q.que_esperamos || '';
+
+            loadHistory(id);
+        }
+
+        async function loadHistory(id) {
+            const response = await fetch(`/api?action=get_history&id=${id}`);
+            const history = await response.json();
+
+            const tbody = document.querySelector('#results-table tbody');
+            tbody.innerHTML = '';
+
+            // Add new entry row
+            const newRow = document.createElement('tr');
+            newRow.className = 'new-audit-row';
+            newRow.innerHTML = `
+                <td><input type="date" id="new-fecha" value="${new Date().toISOString().split('T')[0]}"></td>
+                <td>
+                    <select id="new-oknok">
+                        <option value=""></option>
+                        <option value="OK">OK</option>
+                        <option value="NOK">NOK</option>
+                        <option value="No aplica">No aplica</option>
+                    </select>
+                </td>
+                <td><input type="text" id="new-operario" placeholder="Nº" style="width: 90%;"></td>
+                <td>
+                    <input type="text" id="new-comentario" style="width: 75%;">
+                    <button onclick="saveAudit(${id})" class="save-btn">Guardar</button>
+                </td>
+            `;
+            tbody.appendChild(newRow);
+
+            history.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.dataset.id = row.id;
+
+                if ({{ is_admin | tojson }}) {
+                    tr.innerHTML = `
+                        <td><input type="date" class="edit-fecha" value="${row.fecha}" style="width: 100%; border:none; background:transparent;"></td>
+                        <td>
+                            <select class="edit-oknok" style="width: 100%; border:none; background:transparent;">
+                                <option value="OK" ${row.ok_nok === 'OK' ? 'selected' : ''}>OK</option>
+                                <option value="NOK" ${row.ok_nok === 'NOK' ? 'selected' : ''}>NOK</option>
+                                <option value="No aplica" ${row.ok_nok === 'No aplica' ? 'selected' : ''}>No aplica</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="edit-operario" value="${row.numero_operario || ''}" style="width: 100%; border:none; background:transparent;"></td>
+                        <td><input type="text" class="edit-comentario" value="${row.comentario || ''}" style="width: 100%; border:none; background:transparent;"></td>
+                        <td>
+                            <button onclick="updateAudit(${row.id}, this)" class="save-btn" style="padding: 2px 5px; font-size: 0.8em;">💾</button>
+                            <button onclick="deleteAudit(${row.id}, ${id})" class="save-btn" style="padding: 2px 5px; font-size: 0.8em; background-color: #333;">🗑️</button>
+                        </td>
+                    `;
+                } else {
+                    const tdFecha = document.createElement('td');
+                    tdFecha.textContent = row.fecha;
+                    const tdOkNok = document.createElement('td');
+                    tdOkNok.textContent = row.ok_nok;
+                    const tdOperario = document.createElement('td');
+                    tdOperario.textContent = row.numero_operario || '';
+                    const tdComentario = document.createElement('td');
+                    tdComentario.textContent = row.comentario || '';
+                    tr.appendChild(tdFecha);
+                    tr.appendChild(tdOkNok);
+                    tr.appendChild(tdOperario);
+                    tr.appendChild(tdComentario);
+                }
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function saveAudit(questionId) {
+            const ok_nok = document.getElementById('new-oknok').value;
+            const comentario = document.getElementById('new-comentario').value;
+            const fecha = document.getElementById('new-fecha').value;
+            const numero_operario = document.getElementById('new-operario').value;
+
+            if (!ok_nok) {
+                alert('Por favor selecciona OK, NOK o No aplica');
+                return;
+            }
+
+            const response = await fetch('/api?action=save_audit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pregunta_id: questionId, ok_nok, comentario, fecha, numero_operario })
+            });
+
+            if (response.ok) {
+                loadHistory(questionId);
+            }
+        }
+
+        async function updateAudit(auditId, btn) {
+            const row = btn.closest('tr');
+            const fecha = row.querySelector('.edit-fecha').value;
+            const ok_nok = row.querySelector('.edit-oknok').value;
+            const comentario = row.querySelector('.edit-comentario').value;
+            const numero_operario = row.querySelector('.edit-operario').value;
+
+            const response = await fetch('/api?action=update_audit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: auditId, fecha, ok_nok, comentario, numero_operario })
+            });
+
+            if (response.ok) {
+                btn.textContent = '✅';
+                setTimeout(() => btn.textContent = '💾', 2000);
+            } else {
+                alert('Error al actualizar');
+            }
+        }
+
+        async function deleteAudit(auditId, questionId) {
+            if (!confirm('¿Estás seguro de que deseas eliminar este registro?')) return;
+
+            const response = await fetch(`/api?action=delete_audit&id=${auditId}`);
+            if (response.ok) {
+                loadHistory(questionId);
+            } else {
+                alert('Error al eliminar');
+            }
+        }
+
+        function clearFields() {
+            document.querySelectorAll('.main-content input, .main-content textarea').forEach(f => f.value = '');
+            document.querySelector('#results-table tbody').innerHTML = '';
+        }
+
+        function updateNav() {
+            document.getElementById('btn-first').disabled = currentIndex <= 0;
+            document.getElementById('btn-prev').disabled = currentIndex <= 0;
+            document.getElementById('btn-next').disabled = currentIndex < 0 || currentIndex >= currentQuestionIds.length - 1;
+            document.getElementById('btn-last').disabled = currentIndex < 0 || currentIndex >= currentQuestionIds.length - 1;
+
+            const info = document.getElementById('nav-info');
+            if (currentIndex >= 0) {
+                info.textContent = `Registro: ${currentIndex + 1} de ${currentQuestionIds.length}`;
+            } else {
+                info.textContent = 'Registro: 0 de 0';
+            }
+        }
+
+        document.getElementById('btn-first').onclick = () => { currentIndex = 0; loadQuestionDetails(currentQuestionIds[currentIndex]); updateNav(); };
+        document.getElementById('btn-prev').onclick = () => { if (currentIndex > 0) { currentIndex--; loadQuestionDetails(currentQuestionIds[currentIndex]); updateNav(); } };
+        document.getElementById('btn-next').onclick = () => { if (currentIndex < currentQuestionIds.length - 1) { currentIndex++; loadQuestionDetails(currentQuestionIds[currentIndex]); updateNav(); } };
+        document.getElementById('btn-last').onclick = () => { currentIndex = currentQuestionIds.length - 1; loadQuestionDetails(currentQuestionIds[currentIndex]); updateNav(); };
+
+        // Initial load
+        loadFilters().then(() => {
+            loadQuestions();
+        });
+    </script>
+</body>
+</html>
