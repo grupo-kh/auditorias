@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Auditorías KH · Móvil</title>
-<link rel="icon" type="image/png" href="/static/ico.png">
-<link rel="apple-touch-icon" href="/static/ico.png">
+<link rel="icon" type="image/png" href="{{ request.script_root }}/static/ico.png">
+<link rel="apple-touch-icon" href="{{ request.script_root }}/static/ico.png">
 <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f4f4f7; color: #222; font-size: 15px; -webkit-text-size-adjust: 100%; }
@@ -365,7 +365,7 @@
 <!-- ============ HEADER ============ -->
 <div class="topbar">
     <div class="brand">
-        <img src="/static/Logo.png" alt="KH">
+        <img src="{{ request.script_root }}/static/Logo.png" alt="KH">
         <div>
             <div class="brand-text">Auditorías</div>
             <div class="brand-sub">Process Confirmation</div>
@@ -380,15 +380,15 @@
 <div class="drawer" id="drawer">
     <button class="close" onclick="toggleDrawer()">×</button>
     <h3>Menú</h3>
-    <a href="/manual" target="_blank">📖 Manual de ayuda</a>
+    <a href="{{ request.script_root }}/manual" target="_blank">📖 Manual de ayuda</a>
     {% if is_admin %}
-    <a href="/reports">📈 Informes</a>
-    <a href="/admin_preguntas">⚙️ Gestionar preguntas</a>
-    <a href="/index">🖥️ Versión escritorio</a>
+    <a href="{{ request.script_root }}/reports">📈 Informes</a>
+    <a href="{{ request.script_root }}/admin_preguntas">⚙️ Gestionar preguntas</a>
+    <a href="{{ request.script_root }}/index">🖥️ Versión escritorio</a>
     {% else %}
-    <a href="/index">🖥️ Versión escritorio</a>
+    <a href="{{ request.script_root }}/index">🖥️ Versión escritorio</a>
     {% endif %}
-    <a href="/logout">🚪 Cerrar sesión</a>
+    <a href="{{ request.script_root }}/logout">🚪 Cerrar sesión</a>
 </div>
 
 <!-- ============ FILTROS ============ -->
@@ -454,7 +454,7 @@ function showToast(msg, isError = false) {
 
 // ---------- FETCHES ----------
 async function loadFilters() {
-    const url = `/api?action=get_filter_values&auditor=${encodeURIComponent(selectedAuditor)}`;
+    const url = `{{ request.script_root }}/api?action=get_filter_values&auditor=${encodeURIComponent(selectedAuditor)}`;
     const res = await fetch(url);
     const data = await res.json();
 
@@ -476,7 +476,7 @@ async function loadFilters() {
 }
 
 async function loadQuestions() {
-    const url = `/api?action=get_questions&auditor=${encodeURIComponent(selectedAuditor)}&auditado=${encodeURIComponent(selectedAuditado)}&periodicidad=${encodeURIComponent(selectedPeriodicidad)}&search=${encodeURIComponent(searchQuery)}`;
+    const url = `{{ request.script_root }}/api?action=get_questions&auditor=${encodeURIComponent(selectedAuditor)}&auditado=${encodeURIComponent(selectedAuditado)}&periodicidad=${encodeURIComponent(selectedPeriodicidad)}&search=${encodeURIComponent(searchQuery)}`;
     const res = await fetch(url);
     ids = await res.json();
     document.getElementById('counter').textContent = ids.length;
@@ -501,8 +501,8 @@ async function loadQuestion(id) {
     document.getElementById('question-card').innerHTML = `<div class="card empty">Cargando pregunta…</div>`;
 
     const [qRes, hRes] = await Promise.all([
-        fetch(`/api?action=get_question_details&id=${id}`).then(r => r.json()),
-        fetch(`/api?action=get_history&id=${id}`).then(r => r.json())
+        fetch(`{{ request.script_root }}/api?action=get_question_details&id=${id}`).then(r => r.json()),
+        fetch(`{{ request.script_root }}/api?action=get_history&id=${id}`).then(r => r.json())
     ]);
 
     renderQuestion(qRes, hRes);
@@ -607,7 +607,7 @@ async function saveAudit(questionId) {
     const comentario = document.getElementById('new-comentario').value;
     const numero_operario = document.getElementById('new-operario').value;
 
-    const res = await fetch('/api?action=save_audit', {
+    const res = await fetch('{{ request.script_root }}/api?action=save_audit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pregunta_id: questionId, ok_nok: newAnswer, comentario, fecha, numero_operario })

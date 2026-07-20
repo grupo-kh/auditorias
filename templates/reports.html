@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Informes de Auditoría</title>
-    <link rel="icon" type="image/png" href="/static/ico.png">
+    <link rel="icon" type="image/png" href="{{ request.script_root }}/static/ico.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -27,7 +27,7 @@
 </head>
 <body>
     <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
-        <a href="/index" style="color: #800000; font-weight: bold; text-decoration: none;">&laquo; Volver</a>
+        <a href="{{ request.script_root }}/index" style="color: #800000; font-weight: bold; text-decoration: none;">&laquo; Volver</a>
         <button onclick="exportToPDF()" style="background: #800000; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; font-weight: bold;">📥 Exportar a PDF (A4)</button>
     </div>
 
@@ -36,7 +36,7 @@
             <div class="header">
                 <h1>Respuestas Nok por Semana</h1>
                 <div class="logo-right">
-                    <img src="/static/Logo.png" alt="Logo">
+                    <img src="{{ request.script_root }}/static/Logo.png" alt="Logo">
                 </div>
             </div>
             <div class="chart-container">
@@ -48,7 +48,7 @@
             <div class="header">
                 <h1>Auditorías por Auditor</h1>
                 <div class="logo-right">
-                    <img src="/static/Logo.png" alt="Logo">
+                    <img src="{{ request.script_root }}/static/Logo.png" alt="Logo">
                 </div>
             </div>
             <div class="chart-container">
@@ -60,7 +60,7 @@
             <div class="header">
                 <h1>NOK por puesto Auditado</h1>
                 <div class="logo-right">
-                    <img src="/static/Logo.png" alt="Logo">
+                    <img src="{{ request.script_root }}/static/Logo.png" alt="Logo">
                 </div>
             </div>
             <div class="chart-container">
@@ -103,7 +103,7 @@
         };
 
         async function initCharts() {
-            const response = await fetch('/api?action=get_stats');
+            const response = await fetch('{{ request.script_root }}/api?action=get_stats');
             const data = await response.json();
 
             // 1. NOK por Semana

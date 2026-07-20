@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>URL móvil · Auditorías KH</title>
-<link rel="icon" type="image/png" href="/static/ico.png">
+<link rel="icon" type="image/png" href="{{ request.script_root }}/static/ico.png">
 <style>
     body { font-family: 'Segoe UI', sans-serif; background: #f4f4f7; padding: 40px 20px; color: #222; max-width: 620px; margin: auto; text-align: center; }
     h1 { color: #800000; }
@@ -43,7 +43,7 @@
 <button onclick="copiar()">📋 Copiar URL</button>
 <a href="{{ url }}" target="_blank" style="margin-left:10px;"><button style="background:#444;">🔗 Probar</button></a>
 
-<p class="hint"><a href="/index">&laquo; Volver al panel</a></p>
+<p class="hint"><a href="{{ request.script_root }}/index">&laquo; Volver al panel</a></p>
 
 <script>
 function copiar() {

@@ -37,6 +37,16 @@ APP_HOST = os.environ.get("APP_HOST", "0.0.0.0")
 APP_PORT = int(os.environ.get("APP_PORT", "8000"))
 SERVER_IP = os.environ.get("SERVER_IP", "").strip()
 
+# Prefijo de URL bajo el que se sirve la app (ej. "/auditorias" detrás de un
+# proxy inverso). Vacío = la app cuelga de la raíz.
+APP_URL_PREFIX = os.environ.get("APP_URL_PREFIX", "").strip().rstrip("/")
+if APP_URL_PREFIX and not APP_URL_PREFIX.startswith("/"):
+    APP_URL_PREFIX = "/" + APP_URL_PREFIX
+
+# URL pública base (ej. "http://mi-servidor") para componer la URL móvil
+# cuando la app está detrás de un proxy; vacío = usar SERVER_IP:APP_PORT.
+PUBLIC_URL = os.environ.get("PUBLIC_URL", "").strip().rstrip("/")
+
 
 def _parse_admin_users(raw):
     """Parsea ADMIN_USERS con formato 'usuario:contraseña,usuario2:contraseña2'."""
@@ -56,6 +66,14 @@ ADMIN_USERS = _parse_admin_users(os.environ.get("ADMIN_USERS", ""))
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY or os.urandom(32)  # sin SECRET_KEY se genera una efímera
+
+if APP_URL_PREFIX:
+    # Monta toda la app bajo el prefijo: las rutas pasan a ser
+    # {prefijo}/login, {prefijo}/api, ... y url_for/redirect lo incluyen solo.
+    from werkzeug.exceptions import NotFound
+    from werkzeug.middleware.dispatcher import DispatcherMiddleware
+
+    app.wsgi_app = DispatcherMiddleware(NotFound(), {APP_URL_PREFIX: app.wsgi_app})
 
 
 # ---------------------------------------------------------------------------
@@ -213,9 +231,13 @@ def manual():
 @login_required
 def m_url():
     """Muestra la URL para acceder desde el móvil (réplica de m_url.php)."""
-    ip = SERVER_IP or _detect_local_ip()
-    port_part = "" if APP_PORT in (80, 443) else f":{APP_PORT}"
-    url = f"http://{ip}{port_part}/mobile"
+    ruta_mobile = url_for("mobile")  # incluye APP_URL_PREFIX si lo hay
+    if PUBLIC_URL:
+        url = PUBLIC_URL + ruta_mobile
+    else:
+        ip = SERVER_IP or _detect_local_ip()
+        port_part = "" if APP_PORT in (80, 443) else f":{APP_PORT}"
+        url = f"http://{ip}{port_part}{ruta_mobile}"
     return render_template("m_url.html", url=url)
 
 

@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#800000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Auditorías KH · Acceso móvil</title>
-<link rel="icon" type="image/png" href="/static/ico.png">
-<link rel="apple-touch-icon" href="/static/ico.png">
+<link rel="icon" type="image/png" href="{{ request.script_root }}/static/ico.png">
+<link rel="apple-touch-icon" href="{{ request.script_root }}/static/ico.png">
 <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #800000 0%, #4a0000 100%); min-height: 100vh; color: #222; -webkit-text-size-adjust: 100%; }
@@ -107,7 +107,7 @@
 </head>
 <body>
 <div class="container">
-    <div class="logo-zone"><img src="/static/Logo.png" alt="KH"></div>
+    <div class="logo-zone"><img src="{{ request.script_root }}/static/Logo.png" alt="KH"></div>
     <h1>Auditorías KH</h1>
     <div class="subtitle">Acceso móvil · Process Confirmation</div>
 
@@ -140,7 +140,7 @@
     </div>
 
     <div class="footer-link">
-        <a href="/index">🖥️ Versión escritorio</a>
+        <a href="{{ request.script_root }}/index">🖥️ Versión escritorio</a>
     </div>
 </div>
 </body>

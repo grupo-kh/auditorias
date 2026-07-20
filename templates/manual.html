@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Manual de uso · Auditorías KH</title>
-<link rel="icon" type="image/png" href="/static/ico.png">
+<link rel="icon" type="image/png" href="{{ request.script_root }}/static/ico.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f4f4f4; color: #222; }
@@ -54,7 +54,7 @@
 <body>
 
 <div class="toolbar">
-    <a href="/index">&laquo; Volver al panel</a>
+    <a href="{{ request.script_root }}/index">&laquo; Volver al panel</a>
     <span><strong>Manual de uso · Aplicación de Auditorías</strong></span>
     <button onclick="exportPDF()">📥 Descargar PDF</button>
 </div>
@@ -63,7 +63,7 @@
 
     <!-- ============ PORTADA ============ -->
     <div class="cover">
-        <img src="/static/Logo.png" alt="KH Logo">
+        <img src="{{ request.script_root }}/static/Logo.png" alt="KH Logo">
         <h1>Manual de Usuario</h1>
         <h2>Aplicación de Auditorías · Process Confirmation</h2>
         <div class="meta">

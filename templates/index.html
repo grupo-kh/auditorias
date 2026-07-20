@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CUESTIONARIO PROCESS CONFIRMATION</title>
-    <link rel="icon" type="image/png" href="/static/ico.png">
+    <link rel="icon" type="image/png" href="{{ request.script_root }}/static/ico.png">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -264,7 +264,7 @@
     <div class="container">
         <div class="sidebar">
             <div class="sidebar-logo">
-                <img src="/static/Logo.png" alt="KH KNOW HOW">
+                <img src="{{ request.script_root }}/static/Logo.png" alt="KH KNOW HOW">
             </div>
             <h2>SELECCIONA</h2>
             <div style="text-align: center; color: #800000; font-size: 2em;">&darr;</div>
@@ -296,17 +296,17 @@
                 <!-- Dynamic -->
             </div>
 
-            <a href="/manual" target="_blank" class="manual-btn">📖 Manual de Ayuda</a>
+            <a href="{{ request.script_root }}/manual" target="_blank" class="manual-btn">📖 Manual de Ayuda</a>
         </div>
 
         <div class="main-content">
             <div class="user-info">
                 <span>Conectado como: <strong>{{ user }}</strong></span>
                 {% if is_admin %}
-                    <a href="/reports">📈 Informes</a>
-                    <a href="/admin_preguntas">⚙️ Gestionar Preguntas</a>
+                    <a href="{{ request.script_root }}/reports">📈 Informes</a>
+                    <a href="{{ request.script_root }}/admin_preguntas">⚙️ Gestionar Preguntas</a>
                 {% endif %}
-                <a href="/logout">🚪 Cerrar Sesión</a>
+                <a href="{{ request.script_root }}/logout">🚪 Cerrar Sesión</a>
             </div>
             <div class="header">
                 <div class="title">CUESTIONARIO PROCESS CONFIRMATION</div>
@@ -422,7 +422,7 @@
         });
 
         async function loadFilters() {
-            const url = `/api?action=get_filter_values&auditor=${encodeURIComponent(selectedAuditor)}`;
+            const url = `{{ request.script_root }}/api?action=get_filter_values&auditor=${encodeURIComponent(selectedAuditor)}`;
             const response = await fetch(url);
             const data = await response.json();
 
@@ -439,7 +439,7 @@
         }
 
         async function loadQuestions() {
-            const url = `/api?action=get_questions&auditor=${encodeURIComponent(selectedAuditor)}&auditado=${encodeURIComponent(selectedAuditado)}&periodicidad=${encodeURIComponent(selectedPeriodicidad)}&search=${encodeURIComponent(searchQuery)}`;
+            const url = `{{ request.script_root }}/api?action=get_questions&auditor=${encodeURIComponent(selectedAuditor)}&auditado=${encodeURIComponent(selectedAuditado)}&periodicidad=${encodeURIComponent(selectedPeriodicidad)}&search=${encodeURIComponent(searchQuery)}`;
             const response = await fetch(url);
             let ids = await response.json();
 
@@ -457,7 +457,7 @@
         }
 
         async function loadQuestionDetails(id) {
-            const response = await fetch(`/api?action=get_question_details&id=${id}`);
+            const response = await fetch(`{{ request.script_root }}/api?action=get_question_details&id=${id}`);
             const q = await response.json();
 
             document.getElementById('field-proceso').value = q.proceso || '';
@@ -473,7 +473,7 @@
         }
 
         async function loadHistory(id) {
-            const response = await fetch(`/api?action=get_history&id=${id}`);
+            const response = await fetch(`{{ request.script_root }}/api?action=get_history&id=${id}`);
             const history = await response.json();
 
             const tbody = document.querySelector('#results-table tbody');
@@ -551,7 +551,7 @@
                 return;
             }
 
-            const response = await fetch('/api?action=save_audit', {
+            const response = await fetch('{{ request.script_root }}/api?action=save_audit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ pregunta_id: questionId, ok_nok, comentario, fecha, numero_operario })
@@ -569,7 +569,7 @@
             const comentario = row.querySelector('.edit-comentario').value;
             const numero_operario = row.querySelector('.edit-operario').value;
 
-            const response = await fetch('/api?action=update_audit', {
+            const response = await fetch('{{ request.script_root }}/api?action=update_audit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id: auditId, fecha, ok_nok, comentario, numero_operario })
@@ -586,7 +586,7 @@
         async function deleteAudit(auditId, questionId) {
             if (!confirm('¿Estás seguro de que deseas eliminar este registro?')) return;
 
-            const response = await fetch(`/api?action=delete_audit&id=${auditId}`);
+            const response = await fetch(`{{ request.script_root }}/api?action=delete_audit&id=${auditId}`);
             if (response.ok) {
                 loadHistory(questionId);
             } else {

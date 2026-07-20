@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Audit App</title>
-    <link rel="icon" type="image/png" href="/static/ico.png">
+    <link rel="icon" type="image/png" href="{{ request.script_root }}/static/ico.png">
     <style>
         body { font-family: Arial, sans-serif; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .login-card { background: white; padding: 30px; border-radius: 8px; border: 2px solid #800000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
@@ -22,7 +22,7 @@
 <body>
     <div class="login-card">
         <div style="text-align: center; margin-bottom: 20px;">
-            <img src="/static/Logo.png" alt="Logo" style="max-width: 150px;">
+            <img src="{{ request.script_root }}/static/Logo.png" alt="Logo" style="max-width: 150px;">
         </div>
         <h2>Acceso Auditores</h2>
         {% if error %}
@@ -53,7 +53,7 @@
             <button type="submit">Acceso Admin</button>
         </form>
         <div style="text-align:center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
-            <a href="/m_login" style="color: #800000; text-decoration: none; font-weight: bold;">📱 Acceso desde móvil</a>
+            <a href="{{ request.script_root }}/m_login" style="color: #800000; text-decoration: none; font-weight: bold;">📱 Acceso desde móvil</a>
         </div>
     </div>
 
@@ -66,7 +66,7 @@
             if (isMobile || isSmallScreen) {
                 // No redirige si el usuario ya ha venido manualmente desde m_login
                 if (!window.location.search.includes('desktop=1')) {
-                    window.location.replace('/m_login');
+                    window.location.replace('{{ request.script_root }}/m_login');
                 }
             }
         })();

@@ -1,0 +1,22 @@
+# Fragmento de Caddyfile para servir la app bajo la subruta /auditorias
+# (requiere APP_URL_PREFIX=/auditorias en el .env de la app).
+#
+# Añadir DENTRO del bloque de sitio existente (ej. :80 { ... }) del Caddyfile
+# del servidor y recargar Caddy:  sudo systemctl reload caddy
+#
+# Si el bloque de sitio ya tiene un reverse_proxy "a pelo" (sin handle),
+# envolverlo también en un handle sin ruta para que ambos convivan:
+#
+#   :80 {
+#       handle /auditorias* {
+#           reverse_proxy 127.0.0.1:8010
+#       }
+#       handle {
+#           reverse_proxy 127.0.0.1:8000   # el servicio que ya existiera
+#       }
+#   }
+
+handle /auditorias* {
+    # Puerto interno donde escucha la app Flask (APP_PORT del .env)
+    reverse_proxy 127.0.0.1:8010
+}
